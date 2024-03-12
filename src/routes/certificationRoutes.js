@@ -2,11 +2,15 @@ const express = require('express');
 const router = express.Router();
 const certificationController = require('../controllers/certificationController');
 
+// /certification
+router
+  .route('/certification')
+  .post(certificationController.createCertification);
+
 // /certifications
 router
   .route('/certifications')
   .get(certificationController.getAllCertifications)
-  .post(certificationController.createCertification);
 
 // /certifications/:id
 router

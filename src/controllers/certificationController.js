@@ -1,6 +1,6 @@
 const Certification = require('../models/certificationModel');
 
-// POST /certifications
+// POST /certification
 // Crée une certification
 exports.createCertification = async (req, res) => {
   try {
@@ -25,6 +25,23 @@ exports.createCertification = async (req, res) => {
     // Répondre avec la nouvelle certification créée
     res.status(201).json(certification);
   } catch (err) {
+    // Gérer les erreurs
+    console.error(error);
+    // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
+    res.status(500).json({ error: 'An unexpected error occurred on the server.' });
+  }
+};
+
+// GET /certifications
+// Récupère toutes les certifications
+exports.getAllCertifications = async (req, res) => {
+  try {
+    // Trouver toutes les certifications dans la base de données
+    const certifications = await Certification.find();
+    
+    // Répondre avec les certifications trouvées
+    res.status(200).json(certifications);
+  } catch (error) {
     // Gérer les erreurs
     console.error(error);
     // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
@@ -66,23 +83,6 @@ exports.updateCertification = async (req, res) => {
     res.status(200).json(updatedCertification);
   } catch (error) {
     console.error(error);
-    // Gérer les erreurs
-    console.error(error);
-    // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
-    res.status(500).json({ error: 'An unexpected error occurred on the server.' });
-  }
-};
-
-// GET /certifications
-// Récupère toutes les certifications
-exports.getAllCertifications = async (req, res) => {
-  try {
-    // Trouver toutes les certifications dans la base de données
-    const certifications = await Certification.find();
-    
-    // Répondre avec les certifications trouvées
-    res.status(200).json(certifications);
-  } catch (error) {
     // Gérer les erreurs
     console.error(error);
     // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
