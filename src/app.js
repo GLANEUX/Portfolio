@@ -19,6 +19,7 @@ app.use(express.json());
 const certificationRoutes = require('./routes/certificationRoutes');
 app.use('/', certificationRoutes);
 
-
+const skillCategoryRoutes = require('./routes/skillCategoryRoutes');
+app.use('/', skillCategoryRoutes);
 
 app.listen(port,host);
