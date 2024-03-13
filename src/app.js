@@ -22,4 +22,7 @@ app.use('/', certificationRoutes);
 const skillCategoryRoutes = require('./routes/skillCategoryRoutes');
 app.use('/', skillCategoryRoutes);
 
+const skillRoutes = require('./routes/skillRoutes');
+app.use('/', skillRoutes);
+
 app.listen(port,host);
