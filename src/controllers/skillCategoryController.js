@@ -1,4 +1,5 @@
 const SkillCategory = require('../models/skillCategoryModel');
+const Skill = require('../models/skillModel');
 
 // POST /skillCategory
 // Crée une skillCategory
@@ -46,6 +47,8 @@ exports.createSkillCategory = async (req, res) => {
       res.status(500).json({ error: 'An unexpected error occurred on the server.' });
     }
   };
+
+
   // PUT /skillCategory/:id
 // Modifie une skillCategory par son ID
 exports.updateSkillCategory = async (req, res) => {
@@ -131,3 +134,28 @@ exports.updateSkillCategory = async (req, res) => {
     }
   };
   
+// GET /skillCategory/:id/skills
+// Récupère toutes les skill depuis une skillcategory
+exports.getAllSkillsFromCategory = async (req, res) => {
+  try {
+    const categoryId = req.params.id;
+
+
+    // Vérifier si la skillCategory existe
+    const category = await SkillCategory.findById(categoryId);
+    if (!category) {
+      return res.status(404).json({ error: 'SkillCategory not found' });
+    }
+
+    // Trouver tous les skills avec la catégorie spécifiée
+    const skills = await Skill.find({ skillCategory: categoryId });
+
+    // Répondre avec les skills trouvées
+    res.status(200).json(skills);
+  } catch (error) {
+    // Gérer les erreurs
+    console.error(error);
+    // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
+    res.status(500).json({ error: 'An unexpected error occurred on the server.' });
+  }
+};

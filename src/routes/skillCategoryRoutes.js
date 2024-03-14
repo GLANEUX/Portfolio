@@ -20,5 +20,9 @@ router
   .put(skillCategoryController.updateSkillCategory)
   .delete(skillCategoryController.deleteSkillCategory);
 
+// /skillCategory/:id/skills
+router
+  .route('/skillCategory/:id/skills')
+  .get(skillCategoryController.getAllSkillsFromCategory);  
 module.exports = router;
 
