@@ -1,4 +1,5 @@
 const Skill = require('../models/skillModel');
+const SkillCategory = require('../models/skillCategoryModel')
 // POST /skill
 // Crée une skill
 exports.createSkill = async (req, res) => {
@@ -15,6 +16,7 @@ exports.createSkill = async (req, res) => {
     if (!name || name.trim() === "") {
       return res.status(400).json({ error: 'Missing required parameters: name' });
     }
+
     // Vérifier si le logo est fourni et s'il a une extension .jpg ou .png
     const logoRegex = /\.(jpg|png)$/i;
     if (logo) {
@@ -25,9 +27,28 @@ exports.createSkill = async (req, res) => {
         return res.status(400).json({ error: 'Logo must be a URL with .jpg or .png extension' });
       }
     }
+
     // Vérifier si le rating est valide (compris entre 0 et 100)
     if (rating !== undefined && (isNaN(rating) || rating < 0 || rating > 100)) {
       return res.status(400).json({ error: 'Invalid rating. Rating must be a number between 0 and 100' });
+    }
+
+    // Vérifier si skillCategory est fourni
+    if (skillCategory !== undefined) {
+      // Si skillCategory n'est pas un tableau, le transformer en tableau
+      const categories = Array.isArray(skillCategory) ? skillCategory : [skillCategory];
+
+      // Vérifier que chaque ID de skillCategory existe
+      const invalidIds = [];
+      for (const categoryId of categories) {
+        const category = await SkillCategory.findById(categoryId);
+        if (!category) {
+          invalidIds.push(categoryId);
+        }
+      }
+      if (invalidIds.length > 0) {
+        return res.status(400).json({ error: `Invalid skillCategory IDs: ${invalidIds.join(', ')}` });
+      }
     }
 
     // Créer une nouvelle instance de Skill avec les données
@@ -35,7 +56,7 @@ exports.createSkill = async (req, res) => {
       name: name.trim(),
       logo: logo ? logo.trim().replace(/ /g, '_') : undefined,
       rating,
-      skillCategory: skillCategory !== undefined && skillCategory.trim() !== '' ? [skillCategory.trim()] : null
+      skillCategory: skillCategory !== undefined ? (Array.isArray(skillCategory) ? skillCategory : [skillCategory]) : null
     });
 
     // Enregistrer la nouvelle skill dans la base de données
@@ -49,7 +70,8 @@ exports.createSkill = async (req, res) => {
     // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
     res.status(500).json({ error: 'An unexpected error occurred on the server.' });
   }
-}; 
+};
+
 
 
 // GET /skills
@@ -85,7 +107,6 @@ exports.getAllSkills = async (req, res) => {
       res.status(500).json({ error: 'An unexpected error occurred on the server.' });
     }
   };
-
 // PUT /skill/:id
 // Modifie une skill par son ID
 exports.updateSkill = async (req, res) => {
@@ -137,15 +158,22 @@ exports.updateSkill = async (req, res) => {
 
     // Vérifier si skillCategory est fourni
     if (skillCategory !== undefined) {
-      // Si skillCategory est un tableau, ajouter chaque identifiant de catégorie de compétences au tableau skillCategory de la compétence mise à jour
-      if (Array.isArray(skillCategory)) {
-        updatedFields.skillCategory = skillCategory;
-      } else if (typeof skillCategory === 'string') {
-        // Si skillCategory est une seule valeur, l'ajouter directement au tableau skillCategory de la compétence mise à jour
-        updatedFields.skillCategory = [skillCategory];
-      } else {
-        return res.status(400).json({ error: 'Invalid skillCategory. Must be an array of strings or a string' });
+      // Si skillCategory n'est pas un tableau, le transformer en tableau
+      const categories = Array.isArray(skillCategory) ? skillCategory : [skillCategory];
+
+      // Vérifier que chaque ID de skillCategory existe
+      const invalidIds = [];
+      for (const categoryId of categories) {
+        const category = await SkillCategory.findById(categoryId);
+        if (!category) {
+          invalidIds.push(categoryId);
+        }
       }
+      if (invalidIds.length > 0) {
+        return res.status(400).json({ error: `Invalid skillCategory IDs: ${invalidIds.join(', ')}` });
+      }
+
+      updatedFields.skillCategory = categories;
     } else {
       updatedFields.skillCategory = null; // Définir skillCategory sur null si aucune valeur n'est fournie
     }
@@ -165,6 +193,7 @@ exports.updateSkill = async (req, res) => {
     res.status(500).json({ error: 'An unexpected error occurred on the server.' });
   }
 };
+
 
 
   // GET /skill/:id

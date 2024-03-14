@@ -46,43 +46,45 @@ exports.createSkillCategory = async (req, res) => {
       res.status(500).json({ error: 'An unexpected error occurred on the server.' });
     }
   };
-  
   // PUT /skillCategory/:id
-  // Modifie une skillCategory par son ID
-  exports.updateSkillCategory = async (req, res) => {
-    try {
-      // Rechercher la skillCategory à mettre à jour
-      const skillCategory = await SkillCategory.findById(req.params.id);
-      if (!skillCategory) {
-        return res.status(404).json({ error: 'SkillCategory not found' });
-      }
-  
-      // Initialiser un objet pour stocker les champs mis à jour
-      let updatedFields = {};
-  
-      // Vérifier si le champ 'name' est fourni et n'est pas vide
-      if (req.body.name !== undefined && req.body.name.trim() !== '') {
-        updatedFields.name = req.body.name;
-      }
-  
-  
-      // Mettre à jour la skillCategory avec les champs mis à jour
-      const updatedSkillCategory = await SkillCategory.findByIdAndUpdate(
-        req.params.id,
-        updatedFields,
-        { new: true }
-      );
-  
-      // Répondre avec la skillCategory mise à jour
-      res.status(200).json(updatedSkillCategory);
-    } catch (error) {
-      console.error(error);
-      // Gérer les erreurs
-      console.error(error);
-      // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
-      res.status(500).json({ error: 'An unexpected error occurred on the server.' });
+// Modifie une skillCategory par son ID
+exports.updateSkillCategory = async (req, res) => {
+  try {
+    // Rechercher la skillCategory à mettre à jour
+    const skillCategory = await SkillCategory.findById(req.params.id);
+    if (!skillCategory) {
+      return res.status(404).json({ error: 'SkillCategory not found' });
     }
-  };
+
+    // Initialiser un objet pour stocker les champs mis à jour
+    let updatedFields = {};
+
+    // Vérifier si le champ 'name' est fourni et n'est pas vide
+    if (req.body.name !== undefined && typeof req.body.name === 'string') {
+      const trimmedName = req.body.name.trim();
+      if (trimmedName !== '') {
+        updatedFields.name = trimmedName;
+      }
+    }
+
+    // Mettre à jour la skillCategory avec les champs mis à jour
+    const updatedSkillCategory = await SkillCategory.findByIdAndUpdate(
+      req.params.id,
+      updatedFields,
+      { new: true }
+    );
+
+    // Répondre avec la skillCategory mise à jour
+    res.status(200).json(updatedSkillCategory);
+  } catch (error) {
+    console.error(error);
+    // Gérer les erreurs
+    console.error(error);
+    // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
+    res.status(500).json({ error: 'An unexpected error occurred on the server.' });
+  }
+};
+
   
   // GET /skillCategory/:id
   // Récupère une skillCategory par son ID
