@@ -1,0 +1,1386 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/OGLANEUX/portfolio/1.0.0
+info:
+  version: "1.0.0"
+  title: portfolio Océane GLANEUX
+  description: The API for the portfolio
+  contact:
+    name: Océane GLANEUX
+    email: o.glaneux@gmail.com
+    
+    
+paths:
+
+
+  /Experience:
+    get:
+      tags:
+        - Experience
+      summary: Retrieve all Experience
+      description: Retrieve a list of all Experience.
+      operationId: getAllExperiences
+      responses:
+        '200':
+          description: OK. The list of Experiences has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Experience'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Experience
+      summary: Create an Experience
+      description: Create a new Experience.
+      operationId: CreateExperience
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Experience'
+      responses:
+        '201':
+          description: Experience Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Experience'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Experience'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Experience'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /Experience/{id}:
+    get:
+      tags:
+        - Experience
+      summary: Retrieve a specific Experience
+      description: Retrieve details about a specific Experience by ID.
+      operationId: getOneExperience
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Experience to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Experience found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Experience'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+          
+          
+    put:
+      tags:
+        - Experience
+      summary: Update an Experience
+      description: Update an existing Experience.
+      operationId: ModifyExperience
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the Experience to retrieve
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Experience'
+      responses:
+        '200':
+          description: Experience updated successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - Experience
+      summary: Delete an Experience
+      description: Delete an existing Experience.
+      operationId: DeleteExperience
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Experience to retrieve
+          schema:
+            type: integer
+            format: int64 
+      responses:
+        '204':
+          description: Experience deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'          
+
+  /Education:
+    get:
+      tags:
+        - Education
+      summary: Retrieve all Education
+      description: Retrieve a list of all Education.
+      operationId: getAllEducations
+      responses:
+        '200':
+          description: OK. The list of Education has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Education
+      summary: Create an Education
+      description: Create a new Education.
+      operationId: CreateEducation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Education'
+      responses:
+        '201':
+          description: Education Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Education'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Education'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /Education/{id}:
+    get:
+      tags:
+        - Education
+      summary: Retrieve a Education
+      description: Retrieve details about a specific Education by its ID.
+      operationId: getAEducation
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Education to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK. The Education has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - Education
+      summary: Update a Education
+      description: Update an existing Education.
+      operationId: ModifyEducation
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Education to retrieve
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Education'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Education'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Education'
+      responses:
+        '201':
+          description: Education Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Education'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Education'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'          
+
+    delete:
+      tags:
+        - Education
+      summary: Delete a Education
+      description: Delete an existing Education.
+      operationId: DeleteEducation
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Education to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: Education deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /Project:
+    post:
+      tags:
+        - Project
+      summary: Create a Project
+      description: Create a new Project.
+      operationId: CreateProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Project'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        '201':
+          description: Project Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Project'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'          
+
+    get:
+      tags:
+        - Project
+      summary: Retrieve all Project
+      description: Retrieve a list of all Project.
+      operationId: getAllProject
+      responses:
+        '200':
+          description: OK. The list of Project has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /Project/{id}:
+    get:
+      tags:
+        - Project
+      summary: Retrieve a Project
+      description: Retrieve details about a specific Project by its ID.
+      operationId: getAProject
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Project to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK. The Project has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - Project
+      summary: Update a Project
+      description: Update an existing Project.
+      operationId: ModifyProject
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Project to retrieve
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Project'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        '201':
+          description: Project Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Project'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'          
+
+    delete:
+      tags:
+        - Project
+      summary: Delete a Project
+      description: Delete an existing Project.
+      operationId: DeleteProject
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Project to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: Project deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /Skill:
+    get:
+      tags:
+        - Skill
+      summary: Retrieve all Skill
+      description: Retrieve a list of all Skill.
+      operationId: getAllSkills
+      responses:
+        '200':
+          description: OK. The list of Skill has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Skill'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Skill
+      summary: Create a Skill
+      description: Create a new Skill.
+      operationId: CreateSkill
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Skill'
+      responses:
+        '201':
+          description: SkillCategory Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillCategory'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SkillCategory'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/SkillCategory'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /Skill/{id}:
+    get:
+      tags:
+        - Skill
+      summary: Retrieve a Skill
+      description: Retrieve details about a specific Skill by its ID.
+      operationId: getASkill
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Skill to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK. The Skill has been retrieved successfully.
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Skill'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+    put:
+      tags:
+        - Skill
+      summary: Update a Skill
+      description: Update an existing Skill.
+      operationId: ModifySkill
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Skill to retrieve
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Skill'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Skill'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Skill'
+      responses:
+        '201':
+          description: Skill Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Skill'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Skill'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Skill'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'       
+
+    delete:
+      tags:
+        - Skill
+      summary: Delete a Skill
+      description: Delete an existing Skill.
+      operationId: DeleteSkill
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Skill to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: Skill deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /Skill/{id}/Experience:
+    get:
+      tags:
+        - Experience
+        - Skill
+      summary: Retrieve all Experience
+      description: Retrieve a list of all Experience.
+      operationId: getAllExperiencesBySkill
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Skill
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK. The list of Experiences By Skill has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Experience'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /Skill/{id}/Education:
+    get:
+      tags:
+        - Education
+        - Skill
+      summary: Retrieve all Education
+      description: Retrieve a list of all Education.
+      operationId: getAllEducationsBySkill
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Skill
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK. The list of Education has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /Skill/{id}/Project:
+    get:
+      tags:
+        - Project
+        - Skill
+      summary: Retrieve all Project
+      description: Retrieve a list of all Project.
+      operationId: getAllProjectBySkill
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Skill
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK. The list of Project has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /SkillCategory/{id}/skill:
+    get:
+      tags:
+        - Skill
+        - SkillCategory
+      summary: Retrieve all Skill
+      description: Retrieve a list of all Skill.
+      operationId: getAllSkillsByCategory
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the SkillCategory to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK. The list of Skill has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Skill'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /SkillCategory:
+    post:
+      tags:
+        - SkillCategory
+      summary: Create a SkillCategory
+      description: Create a new SkillCategory.
+      operationId: CreateSkillCategory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SkillCategory'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/SkillCategory'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SkillCategory'
+      responses:
+        '201':
+          description: SkillCategory Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillCategory'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SkillCategory'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/SkillCategory'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'          
+
+    get:
+      tags:
+        - SkillCategory
+      summary: Retrieve all SkillCategory
+      description: Retrieve a list of all SkillCategory.
+      operationId: getAllSkillCategories
+      responses:
+        '200':
+          description: OK. The list of Certification has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SkillCategory'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /SkillCategory/{id}:
+    get:
+      tags:
+        - SkillCategory
+      summary: Retrieve a SkillCategory
+      description: Retrieve details about a specific SkillCategory by its ID.
+      operationId: getASkillCategory
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the SkillCategory to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK. The SkillCategory has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillCategory'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - SkillCategory
+      summary: Update a SkillCategory
+      description: Update an existing SkillCategory.
+      operationId: ModifySkillCategory
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the SkillCategory to retrieve
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SkillCategory'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/SkillCategory'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SkillCategory'
+      responses:
+        '201':
+          description: SkillCategory Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillCategory'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SkillCategory'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/SkillCategory'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'          
+
+    delete:
+      tags:
+        - SkillCategory
+      summary: Delete a SkillCategory
+      description: Delete an existing SkillCategory.
+      operationId: DeleteSkillCategory
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the SkillCategory to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: SkillCategory deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /certifications:
+    get:
+      tags:
+        - Certification
+      summary: Retrieve all certifications
+      description: Retrieve a list of all certifications.
+      operationId: getAllCertifications
+      responses:
+        '200':
+          description: OK. The list of SkillCategories has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Certification'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Certification
+      summary: Create a new certification
+      description: Create a new certification.
+      operationId: CreateCertification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Certification'   
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Certification'   
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Certification'   
+      responses:
+        '201':
+          description: Certification Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certification'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Certification'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Certification'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'   
+
+  /certifications/{id}:
+    put:
+      tags:
+        - Certification
+      summary: Update a certification
+      description: Update an existing certification.
+      operationId: ModifyCertification
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Certification to retrieve
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Certification'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Certification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Certification'
+      responses:
+        '201':
+          description: SkillCategory Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certification'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Certification'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Certification'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'  
+
+    delete:
+      tags:
+        - Certification
+      summary: Delete a certification
+      description: Delete an existing certification.
+      operationId: deleteCertification
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Certification to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: Certification deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    get:
+      tags:
+        - Certification
+      summary: Retrieve a Certification
+      description: Retrieve details about a specific Certification by its ID.
+      operationId: getASCertification
+      parameters:
+        - name: id
+          in: path
+          example: 12345    
+          required: true
+          description: ID of the Certification to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK. The Certification has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certification'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  responses:
+    NotFound:
+      description: The specified resource was not found
+    Unauthorized:
+      description: Unauthorized
+    BadRequest:
+      description: Bad request. The request could not be understood by the server due to malformed syntax, missing required parameters, or invalid data.
+    Forbidden:
+      description: The server understood the request, but refuses to authorize it. This may be due to insufficient permissions.
+    InternalServerError:
+      description: An unexpected error occurred on the server.
+
+
+  schemas:
+    Experience:
+      type: object
+      required:
+        - id
+        - start_date
+        - end_date
+        - company
+        - job_title
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          format: int64 
+          example: 12345    
+          description: "The unique identifier of the experience."
+        start_date:
+          type: string
+          format: date
+          example: "2017-07-21"
+          description: "The start date of the experience."
+        end_date:
+          type: string
+          format: date
+          example: "2017-08-23"
+          description: "The end date of the experience."
+        company:
+          type: string
+          example: "Openai"
+          description: "The name of the company for which the experience was carried out."
+        job_title:
+          type: string
+          example: "Developer web"
+          description: "The job title held during the experience."
+        details:
+          type: string
+          description: "Details of the experience."
+          example: "API and web creation"
+        skills:
+          type: array
+          items:
+            type: integer
+            format: int64
+            example: 12345
+            description: "skill ID"
+          uniqueItems: true
+          example: [12345, 12346]
+          description: "List of skill IDs associated with the experience."
+        created_at:
+          type: string
+          format: date-time
+          description: "The date and time when the entity was created."
+          example: "2022-03-20T10:30:15Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2022-03-20T10:30:15Z"
+          description: "The date and time when the entity was last updated."
+    Education:
+      type: object
+      required:
+        - id
+        - school
+        - start_date
+        - end_date
+        - training_name
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          format: int64 
+          example: 12548
+          description: "The unique identifier of the education."
+        start_date:
+          type: string
+          format: date
+          example: "2017-07-21"
+          description: "The start date of the education."
+        end_date:
+          type: string
+          format: date
+          example: "2017-08-23"
+          description: "The end date of the education."
+        school:
+          type: string
+          example: "Openai University"
+          description: "The name of the school or institution."
+        program:
+          type: string
+          example: "Computer Science"
+          description: "The name of the training or program."
+        details:
+          type: string
+          example: "nothing"
+          description: "Additional details or description of the project."
+        skills:
+          type: array
+          items:
+            type: integer
+            format: int64
+            example: 12345
+            description: "skill ID"
+          uniqueItems: true
+          example: [12345, 12346]
+          description: "List of skill IDs associated with the education."
+        created_at:
+          type: string
+          format: date-time
+          example: "2022-01-15T13:45:30Z"
+          description: "The date and time when the education was created."
+        updated_at:
+          type: string
+          format: date-time
+          example: "2022-03-20T10:30:15Z"
+          description: "The date and time when the education was last updated."
+    Project:
+      type: object
+      required:
+        - id
+        - name
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1526
+          description: "The unique identifier of the project."
+        name:
+          type: string
+          example: "Project space"
+          description: "The name of the project."
+        shortDescription:
+          type: string
+          example: "Project space"
+          description: "Additional details or description of the project."
+        details:
+          type: string
+          description: "<html><body><ul><li>item 1</li><li>item 2</li></ul></body></html>"  
+        links:
+          nullable: true
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "Project Link"
+                description: "The name or title of the link."
+              url:
+                type: string
+                format: uri
+                example: "https://example.com"
+                description: "The URL of the project link."
+          example: 
+            - name: "Project Link"
+              url: "https://example.com"
+          description: "List of links associated with the project."
+        images:
+          nullable: true
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "Project"
+              alt:
+                type: string
+                example: "The code of my project"
+              description:
+                type: string
+                example: "The code of my project"
+              url:
+                type: string
+                example: "image.jpg"
+          example: 
+            - title: "Project"
+              alt: "The code of my project"
+              description: "The code of my project"
+              url: "image.jpg"
+          description: "List of images associated with the project."
+        skills:
+          type: array
+          items:
+            type: integer
+            format: int64
+            example: 12345
+            description: "skill ID"
+          uniqueItems: true
+          example: [12345, 12346]
+          description: "List of skill IDs associated with the education."
+        created_at:
+          type: string
+          format: date-time
+          example: "2022-01-15T13:45:30Z"
+          description: "The date and time when the project was created."
+        updated_at:
+          type: string
+          format: date-time
+          example: "2022-03-20T10:30:15Z"
+          description: "The date and time when the project was last updated."
+    Skill:
+      type: object
+      required:
+        - id
+        - name
+        - rating
+        - created_at
+        - updated_at      
+      properties:
+        id:
+          type: integer
+          format: int64 
+          example: 1526
+          description: "The unique identifier of the skill."
+        name:
+          type: string
+          example: "PHP"
+          description: "The name the skill."
+        logo:
+          type: string
+          example: "php_logo.png"
+          description: "The logo of the skill."
+        rating:
+          type: number
+          nullable: true
+          minimum: 0
+          maximum: 100
+          example: 75
+          description: "The proficiency rating of the skill, ranging from 0 to 100."
+        skillCategory:
+          type: number
+          format: int64
+          example: 12345
+          description: "ID of the skill category. Referenced from SkillCategory."
+        created_at:
+          type: string
+          format: date-time
+          example: "2022-01-15T13:45:30Z"
+          description: "The date and time when the skill was created."
+        updated_at:
+          type: string
+          format: date-time
+          example: "2022-03-20T10:30:15Z"
+          description: "The date and time when the skill was last updated."
+    SkillCategory:
+      type: object
+      required: 
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1526
+          description: "The unique identifier of the skill category."
+        name:
+          type: string
+          example: "Front"
+          description: "The name of the skill category."
+        created_at:
+          type: string
+          format: date-time
+          example: "2022-01-15T13:45:30Z"
+          description: "The date and time when the skill category was created."
+        updated_at:
+          type: string
+          format: date-time
+          example: "2022-03-20T10:30:15Z"
+          description: "The date and time when the skill category was last updated."
+    Certification:
+      type: object
+      required:
+        - id
+        - name
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1526
+          description: "The unique identifier of the skill category."
+        name:
+          type: string
+          example: "Certification Name"
+          description: "The name of the certification."
+        details:
+          type: string
+          example: "Certification Details"
+          description: "Additional details or description of the certification."
+        created_at:
+          type: string
+          format: date-time
+          example: "2022-01-15T13:45:30Z"
+          description: "The date and time when the skill category was created."
+        updated_at:
+          type: string
+          format: date-time
+          example: "2022-03-20T10:30:15Z"
+          description: "The date and time when the skill category was last updated."
+
+tags:
+  - name: Experience
+    description: Experience
+  - name: Education
+    description: Education
+  - name: Project
+    description: Project
+  - name: Skill
+    description: Skill
+  - name: SkillCategory
+    description: SkillCategory
+  - name: Certification
+    description: Certification
+
+
+
+

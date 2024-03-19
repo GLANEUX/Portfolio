@@ -4,60 +4,90 @@ const SkillCategory = require('../models/skillCategoryModel')
 // Crée une skill
 exports.createSkill = async (req, res) => {
   try {
-    // Vérifier si les champs obligatoires sont présents dans la requête
-    if (!req.body.name) {
-      return res.status(400).json({ error: 'Missing required parameters: name' });
-    }
 
     // Extraire les données de la requête POST en supprimant les espaces avant et après (trim)
-    const { name, logo, rating, skillCategory } = req.body;
+    let { name, logo, rating, skillCategory } = req.body;
 
     // Vérifier si les champs obligatoires sont présents dans la requête
     if (!name || name.trim() === "") {
       return res.status(400).json({ error: 'Missing required parameters: name' });
     }
 
-    // Vérifier si le logo est fourni et s'il a une extension .jpg ou .png
-    const logoRegex = /\.(jpg|png)$/i;
-    if (logo) {
-      // Remplacer les espaces par des underscores dans le logo
-      const processedLogo = logo.trim().replace(/ /g, '_');
-      // Vérifier si le logo a une extension valide
-      if (!logoRegex.test(processedLogo)) {
-        return res.status(400).json({ error: 'Logo must be a URL with .jpg or .png extension' });
-      }
+  // Vérifier si le logo est fourni et s'il a une extension .jpg ou .png
+  const logoRegex = /[^.\s][a-zA-Z0-9\s-]*\.(jpg|png)$/i;
+  if (logo) {
+    // Remplacer les espaces par des underscores dans le logo
+    const processedLogo = logo.trim().replace(/ /g, '_');
+    // Vérifier si le logo a une extension valide
+    if (!logoRegex.test(processedLogo)) {
+      return res.status(400).json({ error: 'Logo must be a URL with .jpg or .png extension and contain a name' });
     }
+  }
 
     // Vérifier si le rating est valide (compris entre 0 et 100)
     if (rating !== undefined && (isNaN(rating) || rating < 0 || rating > 100)) {
       return res.status(400).json({ error: 'Invalid rating. Rating must be a number between 0 and 100' });
     }
+// Vérifier si skillCategory est fourni 
+if (skillCategory !== undefined) {
+  // Si skillCategory n'est pas un tableau, le transformer en tableau
+  const categories = Array.isArray(skillCategory) ? skillCategory : [skillCategory];
+  const categoryIdRegex = /^[0-9a-fA-F]{24}$/;
 
-    // Vérifier si skillCategory est fourni
-    if (skillCategory !== undefined) {
-      // Si skillCategory n'est pas un tableau, le transformer en tableau
-      const categories = Array.isArray(skillCategory) ? skillCategory : [skillCategory];
+  // Ensemble pour stocker les ID déjà rencontrés
+  const seenIds = new Set();
+  // Liste pour stocker les IDs en double
+  const duplicateIds = [];
 
-      // Vérifier que chaque ID de skillCategory existe
-      const invalidIds = [];
-      for (const categoryId of categories) {
-        const category = await SkillCategory.findById(categoryId);
-        if (!category) {
-          invalidIds.push(categoryId);
-        }
-      }
-      if (invalidIds.length > 0) {
-        return res.status(400).json({ error: `Invalid skillCategory IDs: ${invalidIds.join(', ')}` });
+  // Vérifier que chaque ID de skillCategory existe
+  const invalidIds = [];
+  let hasValidCategory = false; // Flag pour indiquer si au moins une catégorie de compétences valide est trouvée
+  for (const categoryId of categories) {
+    const trimmedId = categoryId.trim();
+    if (trimmedId === '') {
+      // Si l'ID est vide, ignorer cette itération
+      continue;
+    } else if (!categoryIdRegex.test(trimmedId)) {
+      // Vérifier si l'ID correspond au format attendu
+      invalidIds.push(trimmedId);
+    } else if (seenIds.has(trimmedId)) {
+      // Si l'ID est déjà présent dans l'ensemble, ajouter à la liste des IDs en double
+      duplicateIds.push(trimmedId);
+    } else {
+      // Ajouter l'ID à l'ensemble des ID déjà rencontrés
+      seenIds.add(trimmedId);
+      const category = await SkillCategory.findById(trimmedId);
+      if (!category) {
+        invalidIds.push(trimmedId);
+      } else {
+        hasValidCategory = true; // Mettre le flag à true si une catégorie de compétences valide est trouvée
       }
     }
+  } 
+  if (invalidIds.length > 0) {
+    // Si des identifiants invalides sont trouvés, renvoyer une erreur
+    return res.status(400).json({ error: `Invalid skillCategory IDs: ${invalidIds.join(', ')}` });
+  }
+  if (duplicateIds.length > 0) {
+    // Si des IDs en double sont trouvés, renvoyer une erreur différente
+    return res.status(400).json({ error: `Duplicate skillCategory IDs: ${duplicateIds.join(', ')}` });
+  }
+  if (!hasValidCategory) {
+    // Si aucune catégorie de compétences valide n'est trouvée, définir skillCategory à undefined
+    skillCategory = undefined;
+  }
+}
 
-    // Créer une nouvelle instance de Skill avec les données
-    const newSkill = new Skill({
-      name: name.trim(),
-      logo: logo ? logo.trim().replace(/ /g, '_') : undefined,
-      rating,
-      skillCategory: skillCategory !== undefined ? (Array.isArray(skillCategory) ? skillCategory : [skillCategory]) : null
-    });
+
+// Créer une nouvelle instance de Skill avec les données
+const newSkill = new Skill({
+  name: name.trim(),
+  logo: logo ? logo.trim().replace(/ /g, '_') : undefined,
+  rating,
+  skillCategory: skillCategory !== undefined ? (Array.isArray(skillCategory) ? skillCategory.filter(id => id.trim() !== '') : [skillCategory.trim()]) : null
+});
+
+
 
     // Enregistrer la nouvelle skill dans la base de données
     const skill = await newSkill.save();
