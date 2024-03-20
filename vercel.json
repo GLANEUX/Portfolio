@@ -4,4 +4,4 @@
       { "src": "my-app", "use": "@vercel/static-build" }
     ]
   }
-  
+
