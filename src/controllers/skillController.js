@@ -1,5 +1,6 @@
 const Skill = require('../models/skillModel');
 const SkillCategory = require('../models/skillCategoryModel')
+const Project = require('../models/projectModel');
 // POST /skill
 // Crée une skill
 exports.createSkill = async (req, res) => {
@@ -46,6 +47,7 @@ exports.createSkill = async (req, res) => {
 
       // Vérifier que chaque ID de skillCategory existe
       const invalidIds = [];
+      const notFoundIds = [];
       let hasValidCategory = false; // Flag pour indiquer si au moins une catégorie de compétences valide est trouvée
       for (const categoryId of categories) {
         const trimmedId = categoryId.trim();
@@ -63,7 +65,8 @@ exports.createSkill = async (req, res) => {
           seenIds.add(trimmedId);
           const category = await SkillCategory.findById(trimmedId);
           if (!category) {
-            invalidIds.push(trimmedId);
+            // Si la catégorie n'est pas trouvée, ajouter à la liste des IDs invalides
+            notFoundIds.push(trimmedId);
           } else {
             hasValidCategory = true; // Mettre le flag à true si une catégorie de compétences valide est trouvée
           }
@@ -72,6 +75,10 @@ exports.createSkill = async (req, res) => {
       if (invalidIds.length > 0) {
         // Si des identifiants invalides sont trouvés, renvoyer une erreur
         return res.status(400).json({ error: `Invalid skillCategory IDs: ${invalidIds.join(', ')}` });
+      }
+      if (notFoundIds.length > 0) {
+        // Si des IDs n'existent pas dans la base de données, renvoyer une erreur avec les IDs non trouvés
+        return res.status(400).json({ error: `SkillCategory IDs not found: ${notFoundIds.join(', ')}` });
       }
       if (duplicateIds.length > 0) {
         // Si des IDs en double sont trouvés, renvoyer une erreur différente
@@ -125,25 +132,6 @@ exports.getAllSkills = async (req, res) => {
     res.status(500).json({ error: 'An unexpected error occurred on the server.' });
   }
 };
-
-// GET /skills
-// Récupère toutes les skills
-exports.getAllSkills = async (req, res) => {
-  try {
-    // Trouver toutes les skills dans la base de données
-    const skills = await Skill.find();
-
-    // Répondre avec les skills trouvées
-    res.status(200).json(skills);
-  } catch (error) {
-    // Gérer les erreurs
-    console.error(error);
-    // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
-    res.status(500).json({ error: 'An unexpected error occurred on the server.' });
-  }
-};
-
-
 
 
 
@@ -202,7 +190,6 @@ exports.updateSkill = async (req, res) => {
 
       // Vérifier si skillCategory est fourni
       if (skillCategory !== undefined) {
-
         // Si skillCategory n'est pas un tableau, le transformer en tableau
         const categories = Array.isArray(skillCategory) ? skillCategory : [skillCategory];
         const categoryIdRegex = /^[0-9a-fA-F]{24}$/;
@@ -211,6 +198,8 @@ exports.updateSkill = async (req, res) => {
         const seenIds = new Set();
         // Liste pour stocker les IDs en double
         const duplicateIds = [];
+        // Liste pour stocker les IDs non trouvés dans la base de données
+        const notFoundIds = [];
 
         // Vérifier que chaque ID de skillCategory existe
         const invalidIds = [];
@@ -231,30 +220,34 @@ exports.updateSkill = async (req, res) => {
             seenIds.add(trimmedId);
             const category = await SkillCategory.findById(trimmedId);
             if (!category) {
-              invalidIds.push(trimmedId);
+              // Si la catégorie n'est pas trouvée, ajouter à la liste des IDs non trouvés
+              notFoundIds.push(trimmedId);
             } else {
               hasValidCategory = true; // Mettre le flag à true si une catégorie de compétences valide est trouvée
             }
           }
         }
         if (invalidIds.length > 0) {
-          // Si des identifiants invalides sont trouvés, renvoyer une erreur
+          // Si des identifiants invalides sont trouvés, renvoyer une erreur avec les IDs invalides
           return res.status(400).json({ error: `Invalid skillCategory IDs: ${invalidIds.join(', ')}` });
         }
         if (duplicateIds.length > 0) {
-          // Si des IDs en double sont trouvés, renvoyer une erreur différente
+          // Si des IDs en double sont trouvés, renvoyer une erreur différente avec les IDs en double
           return res.status(400).json({ error: `Duplicate skillCategory IDs: ${duplicateIds.join(', ')}` });
+        }
+        if (notFoundIds.length > 0) {
+          // Si des IDs n'existent pas dans la base de données, renvoyer une erreur avec les IDs non trouvés
+          return res.status(400).json({ error: `SkillCategory IDs not found: ${notFoundIds.join(', ')}` });
         }
         if (!hasValidCategory) {
           // Si aucune catégorie de compétences valide n'est trouvée, définir skillCategory à undefined
-          updatedFields.skillCategory = undefined;
+          skillCategory = undefined;
         } else {
           // Filtrer les identifiants vides et mettre à jour les catégories
           updatedFields.skillCategory = categories.filter(id => id.trim() !== '');
         }
       } else {
-        updatedFields.skillCategory = undefined;
-
+        skillCategory = undefined;
       }
     }
 
@@ -276,8 +269,6 @@ exports.updateSkill = async (req, res) => {
     res.status(500).json({ error: 'An unexpected error occurred on the server.' });
   }
 };
-
-
 
 // GET /skill/:id
 // Récupère une skill par son ID
@@ -316,6 +307,36 @@ exports.deleteSkill = async (req, res) => {
 
     // Si la skill est trouvée et supprimée avec succès, renvoyer une réponse avec le code 200
     res.status(200).send('Skill deleted');
+  } catch (error) {
+    // Gérer les erreurs
+    console.error(error);
+    // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
+    res.status(500).json({ error: 'An unexpected error occurred on the server.' });
+  }
+};
+
+// GET /skill/:id/projets
+// Récupère toutes les projets depuis une skillcategory
+exports.getAllProjectsFromSkill = async (req, res) => {
+  try {
+    const skillId = req.params.id;
+
+    // Vérifier si la skill existe
+    const skill = await Skill.findById(skillId);
+    if (!skill) {
+      return res.status(404).json({ error: 'Skill not found' });
+    }
+
+    // Trouver tous les projets avec la catégorie spécifiée
+    const projects = await Project.find({ skills: skillId });
+
+    // Vérifier si des projets ont été trouvés
+    if (projects.length === 0) {
+      return res.status(404).json({ error: 'No projects found for the specified skill' });
+    }
+
+    // Répondre avec les projets trouvées
+    res.status(200).json(projects);
   } catch (error) {
     // Gérer les erreurs
     console.error(error);

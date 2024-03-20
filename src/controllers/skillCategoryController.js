@@ -136,7 +136,6 @@ exports.getAllSkillsFromCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
 
-
     // Vérifier si la skillCategory existe
     const category = await SkillCategory.findById(categoryId);
     if (!category) {
@@ -145,6 +144,11 @@ exports.getAllSkillsFromCategory = async (req, res) => {
 
     // Trouver tous les skills avec la catégorie spécifiée
     const skills = await Skill.find({ skillCategory: categoryId });
+
+    // Vérifier si des skills ont été trouvées
+    if (skills.length === 0) {
+      return res.status(404).json({ error: 'No skills found for the specified category' });
+    }
 
     // Répondre avec les skills trouvées
     res.status(200).json(skills);
