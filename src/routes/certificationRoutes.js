@@ -16,7 +16,7 @@ router
 router
   .route('/certification/:id')
   .get(certificationController.getCertificationById)
-  .put(certificationController.updateCertification)
+  .patch(certificationController.updateCertification)
   .delete(certificationController.deleteCertification);
 
 module.exports = router;

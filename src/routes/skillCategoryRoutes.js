@@ -17,7 +17,7 @@ router
 router
   .route('/skillCategory/:id')
   .get(skillCategoryController.getSkillCategoryById)
-  .put(skillCategoryController.updateSkillCategory)
+  .patch(skillCategoryController.updateSkillCategory)
   .delete(skillCategoryController.deleteSkillCategory);
 
 // /skillCategory/:id/skills

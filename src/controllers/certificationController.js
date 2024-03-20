@@ -50,7 +50,7 @@ exports.getAllCertifications = async (req, res) => {
   }
 };
 
-// PUT /certification/:id
+// PATCH /certification/:id
 // Modifie une certification par son ID
 exports.updateCertification = async (req, res) => {
   try {

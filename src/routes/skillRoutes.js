@@ -17,7 +17,7 @@ router
 router
   .route('/skill/:id')
   .get(skillController.getSkillById)
-  .put(skillController.updateSkill)
+  .patch(skillController.updateSkill)
   .delete(skillController.deleteSkill);
 
 module.exports = router;
