@@ -27,5 +27,9 @@ router
 router
   .route('/skill/:id/experiences')
   .get(skillController.getAllExperiencesFromSkill);
+
+  router
+  .route('/skill/:id/educations')
+  .get(skillController.getAllEducationsFromSkill);
 module.exports = router;
 

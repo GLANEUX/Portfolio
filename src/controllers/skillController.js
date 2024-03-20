@@ -2,6 +2,8 @@ const Skill = require('../models/skillModel');
 const SkillCategory = require('../models/skillCategoryModel')
 const Project = require('../models/projectModel');
 const Experience = require('../models/experienceModel');
+const Education = require('../models/educationModel');
+
 // POST /skill
 // Crée une skill
 exports.createSkill = async (req, res) => {
@@ -368,6 +370,37 @@ exports.getAllExperiencesFromSkill = async (req, res) => {
 
     // Répondre avec les projets trouvées
     res.status(200).json(experiences);
+  } catch (error) {
+    // Gérer les erreurs
+    console.error(error);
+    // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
+    res.status(500).json({ error: 'An unexpected error occurred on the server.' });
+  }
+};
+
+
+// GET /skill/:id/educations
+// Récupère toutes les educations depuis une skill
+exports.getAllEducationsFromSkill = async (req, res) => {
+  try {
+    const skillId = req.params.id;
+
+    // Vérifier si la skill existe
+    const skill = await Skill.findById(skillId);
+    if (!skill) {
+      return res.status(404).json({ error: 'Skill not found' });
+    }
+
+    // Trouver tous les projets avec la catégorie spécifiée
+    const educations = await Education.find({ skills: skillId });
+
+    // Vérifier si des projets ont été trouvés
+    if (educations.length === 0) {
+      return res.status(404).json({ error: 'No educations found for the specified skill' });
+    }
+
+    // Répondre avec les projets trouvées
+    res.status(200).json(educations);
   } catch (error) {
     // Gérer les erreurs
     console.error(error);

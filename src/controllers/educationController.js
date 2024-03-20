@@ -1,21 +1,20 @@
-const Experience = require('../models/experienceModel');
+const Education = require('../models/educationModel');
 const Skills = require('../models/skillModel');
 
-// POST /experience
-// Crée une Experience
-exports.createExperience = async (req, res) => {
+
+// POST /education
+// Crée une Education
+exports.createEducation = async (req, res) => {
     try {
       // Extraire les données de la requête POST en supprimant les espaces avant et après (trim)
-      let {company, job_title, details, skills } = req.body;
+      let {school, program, details, skills } = req.body;
   
       // Vérifier si les champs obligatoires sont présents dans la requête
-      if (!company || company.trim() === "") {
-        return res.status(400).json({ error: 'Missing required parameters: company' });
+      if (!school || school.trim() === "") {
+        return res.status(400).json({ error: 'Missing required parameters: school' });
       }
-      if (!job_title || job_title.trim() === "") {
-        return res.status(400).json({ error: 'Missing required parameters: job_title' });
-      }  
-      // Vérifier si Experiences est fourni 
+
+      // Vérifier si Educations est fourni 
       if (skills !== undefined) {
         // Si skills n'est pas un tableau, le transformer en tableau
         const categories = Array.isArray(skills) ? skills : [skills];
@@ -73,18 +72,18 @@ exports.createExperience = async (req, res) => {
       }
   
 
-      // Créer une nouvelle instance de Experience avec les données
-      const newExperience = new Experience({
-        company: company.trim(),
-        job_title: company.trim(),
+      // Créer une nouvelle instance de Education avec les données
+      const newEducation = new Education({
+        school: school.trim(),
+        program:  program !== undefined ? (program.trim() !== "" ? program.trim() : undefined) : program,
         details: details !== undefined ? (details.trim() !== "" ? details.trim() : undefined) : details,
         skills: skills !== undefined ? (Array.isArray(skills) ? skills.filter(id => id.trim() !== '')/* trim() ne mache pas */ : [skills.trim()]) : null
       });
   
-      // Enregistrer la nouvelle Experience dans la base de données
-      const skill = await newExperience.save();
+      // Enregistrer la nouvelle Education dans la base de données
+      const skill = await newEducation.save();
   
-      // Répondre avec la nouvelle Experience créée
+      // Répondre avec la nouvelle Education créée
       res.status(201).json(skill);
     } catch (err) {
       // Gérer les erreurs
@@ -95,15 +94,15 @@ exports.createExperience = async (req, res) => {
   };
   
   
-// GET /experiences
-// Récupère toutes les experiences
-exports.getAllExperiences = async (req, res) => {
+// GET /educations
+// Récupère toutes les educations
+exports.getAllEducations = async (req, res) => {
     try {
-      // Trouver toutes les experiences dans la base de données
-      const experiences = await Experience.find();
+      // Trouver toutes les educations dans la base de données
+      const educations = await Education.find();
   
-      // Répondre avec les experiences trouvées
-      res.status(200).json(experiences);
+      // Répondre avec les educations trouvées
+      res.status(200).json(educations);
     } catch (error) {
       // Gérer les erreurs
       console.error(error);
@@ -111,9 +110,9 @@ exports.getAllExperiences = async (req, res) => {
       res.status(500).json({ error: 'An unexpected error occurred on the server.' });
     }
   };
-  // GET /experience/:id
-// Récupère une experience par son ID
-exports.getExperienceById = async (req, res) => {
+  // GET /education/:id
+// Récupère une education par son ID
+exports.getEducationById = async (req, res) => {
     try {
       if (req.params.id == undefined || req.params.id.trim() == "")  {
         return res.status(400).json({ error: 'Empty' });
@@ -124,17 +123,17 @@ exports.getExperienceById = async (req, res) => {
             return res.status(400).json({ error: 'Not an ID' });
 
         }
-              // Rechercher la experience dans la base de données par son ID
-      const experience = await Experience.findById(req.params.id);
+              // Rechercher la education dans la base de données par son ID
+      const education = await Education.findById(req.params.id);
   
-      // Vérifier si la experience existe
-      if (!experience) {
-        // Si la experience n'est pas trouvée, renvoyer une réponse avec le code 404
-        return res.status(404).json({ error: 'experience not found' });
+      // Vérifier si la education existe
+      if (!education) {
+        // Si la education n'est pas trouvée, renvoyer une réponse avec le code 404
+        return res.status(404).json({ error: 'education not found' });
       }
   
-      // Si la experience est trouvée, renvoyer une réponse avec la experience
-      res.status(200).json(experience);
+      // Si la education est trouvée, renvoyer une réponse avec la education
+      res.status(200).json(education);
     } catch (error) {
       // Gérer les erreurs
       console.error(error);
@@ -142,21 +141,21 @@ exports.getExperienceById = async (req, res) => {
     }
   };
   
-   // DELETE /experience/:id
-  // Supprime une experience par son ID
-  exports.deleteExperience = async (req, res) => {
+   // DELETE /education/:id
+  // Supprime une education par son ID
+  exports.deleteEducation = async (req, res) => {
     try {
-      // Rechercher la experience à supprimer dans la base de données par son ID et la supprimer
-      const experience = await Experience.findByIdAndDelete(req.params.id);
+      // Rechercher la education à supprimer dans la base de données par son ID et la supprimer
+      const education = await Education.findByIdAndDelete(req.params.id);
       
-      // Vérifier si la experience existe
-      if (!experience) {
-        // Si la experience n'est pas trouvée, renvoyer une réponse avec le code 404
-        return res.status(404).json({ error: 'Experience not found' });
+      // Vérifier si la education existe
+      if (!education) {
+        // Si la education n'est pas trouvée, renvoyer une réponse avec le code 404
+        return res.status(404).json({ error: 'Education not found' });
       }
       
-      // Si la experience est trouvée et supprimée avec succès, renvoyer une réponse avec le code 200
-      res.status(200).send('Experience deleted');
+      // Si la education est trouvée et supprimée avec succès, renvoyer une réponse avec le code 200
+      res.status(200).send('Education deleted');
     } catch (error) {
       // Gérer les erreurs
       console.error(error);
@@ -166,30 +165,35 @@ exports.getExperienceById = async (req, res) => {
   };
 
   //Perfectionner
-// PATCH /experience/:id
+// PATCH /education/:id
 // Modifie un projet par son ID
-exports.updateExperience = async (req, res) => {
+exports.updateEducation = async (req, res) => {
     try {
       // Rechercher le projet à mettre à jour
-      const experience = await Experience.findById(req.params.id);
-      if (!experience) {
-        return res.status(404).json({ error: 'Experience not found' });
+      const education = await Education.findById(req.params.id);
+      if (!education) {
+        return res.status(404).json({ error: 'Education not found' });
       }
   
       // Initialiser un objet pour stocker les champs mis à jour
       let updatedFields = {};
   
-      // Vérifier si le champ 'company' est fourni et est de type chaîne de caractères non vide
-      if (req.body.company !== undefined && req.body.company.trim() !== '') {
-        updatedFields.company = req.body.company.trim();
+      // Vérifier si le champ 'school' est fourni et est de type chaîne de caractères non vide
+      if (req.body.school !== undefined && req.body.school.trim() !== '') {
+        updatedFields.school = req.body.school.trim();
       }
   
+  // Vérifier si le champ 'program' est fourni et est de type chaîne de caractères non vide
+  if (req.body.program !== undefined && req.body.program.trim() !== '') {
+    if (req.body.program.trim() == "delete") {
+      // Utiliser l'opérateur $unset de Mongoose pour supprimer le champ program
+      updatedFields.$unset = { program: "" };
+    } else {
+      updatedFields.program = req.body.program.trim();
+    }
+  }
   
-        // Vérifier si le champ 'company' est fourni et est de type chaîne de caractères non vide
-        if (req.body.job_title !== undefined && req.body.company.trim() !== '') {
-            updatedFields.job_title = req.body.job_title.trim();
-          }
-      
+  
       // Vérifier si le champ 'details' est fourni et est de type chaîne de caractères non vide
       if (req.body.details !== undefined && req.body.details.trim() !== '') {
         if (req.body.details.trim() == "delete") {
@@ -272,14 +276,14 @@ exports.updateExperience = async (req, res) => {
       }
   
       // Mettre à jour le projet avec les champs mis à jour
-      const updatedExperience = await Experience.findByIdAndUpdate(
+      const updatedEducation = await Education.findByIdAndUpdate(
         req.params.id,
         updatedFields,
         { new: true }
       );
   
       // Répondre avec le projet mis à jour
-      res.status(200).json(updatedExperience);
+      res.status(200).json(updatedEducation);
     } catch (error) {
       console.error(error);
       // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500

@@ -31,4 +31,7 @@ app.use('/', projectRoutes);
 const experienceRoutes = require('./routes/experienceRoutes');
 app.use('/', experienceRoutes);
 
+const educationRoutes = require('./routes/educationRoutes');
+app.use('/', educationRoutes);
+
 app.listen(port,host);
