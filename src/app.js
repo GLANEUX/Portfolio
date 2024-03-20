@@ -28,4 +28,7 @@ app.use('/', skillRoutes);
 const projectRoutes = require('./routes/projectRoutes');
 app.use('/', projectRoutes);
 
+const experienceRoutes = require('./routes/experienceRoutes');
+app.use('/', experienceRoutes);
+
 app.listen(port,host);
