@@ -7,18 +7,18 @@ router
   .route('/project')
   .post(projectController.createProject);
 
-// // /projects
-// router
-//   .route('/projects')
-//   .get(projectController.getAllProjects)
+// /projects
+router
+  .route('/projects')
+  .get(projectController.getAllProjects)
 
 
-// // /project/:id
-// router
-//   .route('/project/:id')
-//   .get(projectController.getrojectById)
-//   .put(projectController.updateProject)
-//   .delete(projectController.deleteProject);
+// /project/:id
+router
+  .route('/project/:id')
+  .get(projectController.getProjectById)
+  .patch(projectController.updateProject)
+  .delete(projectController.deleteProject);
 
 module.exports = router;
 

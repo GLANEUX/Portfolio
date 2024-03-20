@@ -10,7 +10,7 @@ router
 // /skills
 router
   .route('/skills')
-  .get(skillController.getAllSkills)
+  .get(skillController.getAllSkills);
 
 
 // /skill/:id
@@ -19,6 +19,10 @@ router
   .get(skillController.getSkillById)
   .patch(skillController.updateSkill)
   .delete(skillController.deleteSkill);
+
+router
+  .route('/skill/:id/projets')
+  .get(skillController.getAllProjectsFromSkill);
 
 module.exports = router;
 
