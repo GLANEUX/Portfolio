@@ -49,7 +49,7 @@ exports.createSkillCategory = async (req, res) => {
   };
 
 
-  // PUT /skillCategory/:id
+  // PATCH /skillCategory/:id
 // Modifie une skillCategory par son ID
 exports.updateSkillCategory = async (req, res) => {
   try {
@@ -62,12 +62,9 @@ exports.updateSkillCategory = async (req, res) => {
     // Initialiser un objet pour stocker les champs mis à jour
     let updatedFields = {};
 
-    // Vérifier si le champ 'name' est fourni et n'est pas vide
-    if (req.body.name !== undefined && typeof req.body.name === 'string') {
-      const trimmedName = req.body.name.trim();
-      if (trimmedName !== '') {
-        updatedFields.name = trimmedName;
-      }
+    // Vérifier si le champ 'name' est fourni et est de type chaîne de caractères non vide
+    if (req.body.name !== undefined && typeof req.body.name === 'string' && req.body.name.trim() !== '') {
+      updatedFields.name = req.body.name.trim();
     }
 
     // Mettre à jour la skillCategory avec les champs mis à jour
@@ -82,11 +79,10 @@ exports.updateSkillCategory = async (req, res) => {
   } catch (error) {
     console.error(error);
     // Gérer les erreurs
-    console.error(error);
-    // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
     res.status(500).json({ error: 'An unexpected error occurred on the server.' });
   }
 };
+
 
   
   // GET /skillCategory/:id

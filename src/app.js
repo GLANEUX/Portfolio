@@ -25,4 +25,7 @@ app.use('/', skillCategoryRoutes);
 const skillRoutes = require('./routes/skillRoutes');
 app.use('/', skillRoutes);
 
+const projectRoutes = require('./routes/projectRoutes');
+app.use('/', projectRoutes);
+
 app.listen(port,host);
