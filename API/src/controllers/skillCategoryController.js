@@ -144,14 +144,14 @@ exports.deleteSkillCategory = async (req, res) => {
 
     }
 
-
+    // Rechercher la skillCategory à supprimer dans la base de données par son ID et la supprimer
+    const skillCategory = await SkillCategory.findByIdAndDelete(req.params.id);
     // Vérifier si la skillCategory existe
     if (!skillCategory) {
       // Si la skillCategory n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'SkillCategory not found' });
     }
-    // Rechercher la skillCategory à supprimer dans la base de données par son ID et la supprimer
-    const skillCategory = await SkillCategory.findByIdAndDelete(req.params.id);
+
 
     // Si la skillCategory est trouvée et supprimée avec succès, renvoyer une réponse avec le code 200
     res.status(200).send('SkillCategory deleted');
