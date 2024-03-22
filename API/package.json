@@ -1,8 +1,8 @@
 {
-  "name": "src",
+  "name": "api",
   "version": "1.0.0",
   "description": "Portfolio API",
-  "main": "app.js",
+  "main": "./src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
@@ -14,7 +14,9 @@
   "author": "Océane GLANEUX",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.3.1",
     "moment-timezone": "^0.5.45",
+    "mongodb": "^6.5.0",
     "mongoose": "^8.2.1",
     "nodemon": "^3.1.0",
     "swagger-jsdoc": "^6.2.8",
