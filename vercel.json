@@ -1,67 +1,9 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "my-app",
-      "use": "@vercel/static-build"
-    }
-  ],
   "routes": [
     {
-      "src": "/(.*\\.js)",
-      "dest": "/my-app/$1"
-    },
-    {
-      "src": "/(.*\\.css)",
-      "dest": "/my-app/$1"
-    },
-    {
-      "src": "/(.*\\.png)",
-      "dest": "/my-app/$1"
-    },
-    {
-      "src": "/(.*\\.jpg)",
-      "dest": "/my-app/$1"
-    },
-    {
-      "src": "/(.*\\.jpeg)",
-      "dest": "/my-app/$1"
-    },
-    {
-      "src": "/(.*\\.gif)",
-      "dest": "/my-app/$1"
-    },
-    {
-      "src": "/(.*\\.svg)",
-      "dest": "/my-app/$1"
-    },
-    {
-      "src": "/(.*\\.ico)",
-      "dest": "/my-app/$1"
-    },
-    {
-      "src": "/(.*\\.json)",
-      "dest": "/my-app/$1"
-    },
-    {
-      "src": "/(.*\\.woff)",
-      "dest": "/my-app/$1"
-    },
-    {
-      "src": "/(.*\\.woff2)",
-      "dest": "/my-app/$1"
-    },
-    {
-      "src": "/(.*\\.ttf)",
-      "dest": "/my-app/$1"
-    },
-    {
-      "src": "/(.*\\.eot)",
-      "dest": "/my-app/$1"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/my-app/index.html"
+      "dest": "/my-app/$1"
     }
   ]
 }
