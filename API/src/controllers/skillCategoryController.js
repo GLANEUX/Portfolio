@@ -23,7 +23,7 @@ exports.createSkillCategory = async (req, res) => {
 
     // Répondre avec la nouvelle skillCategory créée
     res.status(201).json(skillCategory);
-  } catch (err) {
+  } catch (error) {
     // Gérer les erreurs
     console.error(error);
     // En cas d'erreur, renvoyer une réponse d'erreur avec le code 500
