@@ -5,7 +5,7 @@ const host ='0.0.0.0';
 
 const swaggerUi = require('swagger-ui-express');
 
-const swaggerDocument = require('./swaggerConfig.js');
+const swaggerDocument = require('../src/doc/swaggerConfig.js');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
