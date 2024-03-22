@@ -117,8 +117,6 @@ exports.createSkill = async (req, res) => {
   }
 };
 
-
-
 // GET /skills
 // Récupère toutes les skills
 exports.getAllSkills = async (req, res) => {
@@ -136,13 +134,22 @@ exports.getAllSkills = async (req, res) => {
   }
 };
 
-
-
-
 // PATCH /skill/:id
 // Modifie une skill par son ID
 exports.updateSkill = async (req, res) => {
   try {
+
+    // Recherche si l'id est vide
+    if (req.params.id == undefined || req.params.id.trim() == "") {
+      return res.status(400).json({ error: 'Empty' });
+    }
+    // Recherche si l'id est correcte
+    const skillIdRegex = /^[0-9a-fA-F]{24}$/;
+    if (!skillIdRegex.test(req.params.id.trim())) {
+      return res.status(400).json({ error: 'Not an ID' });
+
+    }
+
     // Rechercher la skill à mettre à jour
     const skill = await Skill.findById(req.params.id);
     if (!skill) {
@@ -277,14 +284,24 @@ exports.updateSkill = async (req, res) => {
 // Récupère une skill par son ID
 exports.getSkillById = async (req, res) => {
   try {
-    // Rechercher la skill dans la base de données par son ID
-    const skill = await Skill.findById(req.params.id);
+    // Recherche si l'id est vide
+    if (req.params.id == undefined || req.params.id.trim() == "") {
+      return res.status(400).json({ error: 'Empty' });
+    }
+    // Recherche si l'id est correcte
+    const skillIdRegex = /^[0-9a-fA-F]{24}$/;
+    if (!skillIdRegex.test(req.params.id.trim())) {
+      return res.status(400).json({ error: 'Not an ID' });
+
+    }
 
     // Vérifier si la skill existe
     if (!skill) {
       // Si la skill n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'Skill not found' });
     }
+    // Rechercher la skill dans la base de données par son ID
+    const skill = await Skill.findById(req.params.id);
 
     // Si la skill est trouvée, renvoyer une réponse avec la skill
     res.status(200).json(skill);
@@ -299,14 +316,26 @@ exports.getSkillById = async (req, res) => {
 // Supprime une skill par son ID
 exports.deleteSkill = async (req, res) => {
   try {
-    // Rechercher la skill à supprimer dans la base de données par son ID et la supprimer
-    const skill = await Skill.findByIdAndDelete(req.params.id);
+
+    // Recherche si l'id est vide
+    if (req.params.id == undefined || req.params.id.trim() == "") {
+      return res.status(400).json({ error: 'Empty' });
+    }
+    // Recherche si l'id est correcte
+    const skillIdRegex = /^[0-9a-fA-F]{24}$/;
+    if (!skillIdRegex.test(req.params.id.trim())) {
+      return res.status(400).json({ error: 'Not an ID' });
+
+    }
+
 
     // Vérifier si la skill existe
     if (!skill) {
       // Si la skill n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'Skill not found' });
     }
+    // Rechercher la skill à supprimer dans la base de données par son ID et la supprimer
+    const skill = await Skill.findByIdAndDelete(req.params.id);
 
     // Si la skill est trouvée et supprimée avec succès, renvoyer une réponse avec le code 200
     res.status(200).send('Skill deleted');
@@ -322,6 +351,19 @@ exports.deleteSkill = async (req, res) => {
 // Récupère tout les projets depuis une skill
 exports.getAllProjectsFromSkill = async (req, res) => {
   try {
+
+
+    // Recherche si l'id est vide
+    if (req.params.id == undefined || req.params.id.trim() == "") {
+      return res.status(400).json({ error: 'Empty' });
+    }
+    // Recherche si l'id est correcte
+    const skillIdRegex = /^[0-9a-fA-F]{24}$/;
+    if (!skillIdRegex.test(req.params.id.trim())) {
+      return res.status(400).json({ error: 'Not an ID' });
+
+    }
+
     const skillId = req.params.id;
 
     // Vérifier si la skill existe
@@ -352,6 +394,19 @@ exports.getAllProjectsFromSkill = async (req, res) => {
 // Récupère toutes les experiences depuis une skill
 exports.getAllExperiencesFromSkill = async (req, res) => {
   try {
+
+    // Recherche si l'id est vide
+    if (req.params.id == undefined || req.params.id.trim() == "") {
+      return res.status(400).json({ error: 'Empty' });
+    }
+    // Recherche si l'id est correcte
+    const skillIdRegex = /^[0-9a-fA-F]{24}$/;
+    if (!skillIdRegex.test(req.params.id.trim())) {
+      return res.status(400).json({ error: 'Not an ID' });
+
+    }
+
+
     const skillId = req.params.id;
 
     // Vérifier si la skill existe
@@ -383,6 +438,18 @@ exports.getAllExperiencesFromSkill = async (req, res) => {
 // Récupère toutes les educations depuis une skill
 exports.getAllEducationsFromSkill = async (req, res) => {
   try {
+
+    // Recherche si l'id est vide
+    if (req.params.id == undefined || req.params.id.trim() == "") {
+      return res.status(400).json({ error: 'Empty' });
+    }
+    // Recherche si l'id est correcte
+    const skillIdRegex = /^[0-9a-fA-F]{24}$/;
+    if (!skillIdRegex.test(req.params.id.trim())) {
+      return res.status(400).json({ error: 'Not an ID' });
+
+    }
+
     const skillId = req.params.id;
 
     // Vérifier si la skill existe
