@@ -13,7 +13,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
    
 const mongoose = require("mongoose");
   
-console.log(process.env.connnexionMONGO)
 mongoose.connect(process.env.connnexionMONGO);
 
 app.use(express.urlencoded());
