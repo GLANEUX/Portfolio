@@ -237,14 +237,24 @@ exports.getAllProjects = async (req, res) => {
 // Récupère une project par son ID
 exports.getProjectById = async (req, res) => {
   try {
-    // Rechercher la project dans la base de données par son ID
-    const project = await Project.findById(req.params.id);
+    // Recherche si l'id est vide
+    if (req.params.id == undefined || req.params.id.trim() == "") {
+      return res.status(400).json({ error: 'Empty' });
+    }
+    // Recherche si l'id est correcte
+    const skillIdRegex = /^[0-9a-fA-F]{24}$/;
+    if (!skillIdRegex.test(req.params.id.trim())) {
+      return res.status(400).json({ error: 'Not an ID' });
+
+    }
 
     // Vérifier si la project existe
     if (!project) {
       // Si la project n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'Skill not found' });
     }
+    // Rechercher la project dans la base de données par son ID
+    const project = await Project.findById(req.params.id);
 
     // Si la project est trouvée, renvoyer une réponse avec la project
     res.status(200).json(project);
@@ -260,14 +270,24 @@ exports.getProjectById = async (req, res) => {
 // Supprime une project par son ID
 exports.deleteProject = async (req, res) => {
   try {
-    // Rechercher la project à supprimer dans la base de données par son ID et la supprimer
-    const project = await Project.findByIdAndDelete(req.params.id);
+    // Recherche si l'id est vide
+    if (req.params.id == undefined || req.params.id.trim() == "") {
+      return res.status(400).json({ error: 'Empty' });
+    }
+    // Recherche si l'id est correcte
+    const skillIdRegex = /^[0-9a-fA-F]{24}$/;
+    if (!skillIdRegex.test(req.params.id.trim())) {
+      return res.status(400).json({ error: 'Not an ID' });
+
+    }
 
     // Vérifier si la project existe
     if (!project) {
       // Si la project n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'Project not found' });
     }
+    // Rechercher la project à supprimer dans la base de données par son ID et la supprimer
+    const project = await Project.findByIdAndDelete(req.params.id);
 
     // Si la project est trouvée et supprimée avec succès, renvoyer une réponse avec le code 200
     res.status(200).send('Project deleted');
@@ -285,6 +305,18 @@ exports.deleteProject = async (req, res) => {
 // Modifie un projet par son ID
 exports.updateProject = async (req, res) => {
   try {
+
+    // Recherche si l'id est vide
+    if (req.params.id == undefined || req.params.id.trim() == "") {
+      return res.status(400).json({ error: 'Empty' });
+    }
+    // Recherche si l'id est correcte
+    const skillIdRegex = /^[0-9a-fA-F]{24}$/;
+    if (!skillIdRegex.test(req.params.id.trim())) {
+      return res.status(400).json({ error: 'Not an ID' });
+
+    }
+
     // Rechercher le projet à mettre à jour
     const project = await Project.findById(req.params.id);
     if (!project) {
@@ -299,15 +331,15 @@ exports.updateProject = async (req, res) => {
       updatedFields.name = req.body.name.trim();
     }
 
-// Vérifier si le champ 'shortDescription' est fourni et est de type chaîne de caractères non vide
-if (req.body.shortDescription !== undefined && req.body.shortDescription.trim() !== '') {
-  if (req.body.shortDescription.trim() == "delete") {
-    // Utiliser l'opérateur $unset de Mongoose pour supprimer le champ shortDescription
-    updatedFields.$unset = { shortDescription: "" };
-  } else {
-    updatedFields.shortDescription = req.body.shortDescription.trim();
-  }
-}
+    // Vérifier si le champ 'shortDescription' est fourni et est de type chaîne de caractères non vide
+    if (req.body.shortDescription !== undefined && req.body.shortDescription.trim() !== '') {
+      if (req.body.shortDescription.trim() == "delete") {
+        // Utiliser l'opérateur $unset de Mongoose pour supprimer le champ shortDescription
+        updatedFields.$unset = { shortDescription: "" };
+      } else {
+        updatedFields.shortDescription = req.body.shortDescription.trim();
+      }
+    }
 
 
     // Vérifier si le champ 'details' est fourni et est de type chaîne de caractères non vide
@@ -320,7 +352,7 @@ if (req.body.shortDescription !== undefined && req.body.shortDescription.trim() 
       }
     }
 
-    
+
     let skills = req.body.skills;
     // Vérifier si le champ 'skills' est fourni
     if (skills === "null") {
@@ -392,7 +424,7 @@ if (req.body.shortDescription !== undefined && req.body.shortDescription.trim() 
     }
 
 
-    
+
     if (req.body.links !== undefined) {
       // Vérification de la présence et du type de `links`
       if (req.body.links !== undefined && Array.isArray(req.body.links)) {
@@ -444,15 +476,15 @@ if (req.body.shortDescription !== undefined && req.body.shortDescription.trim() 
       }
     }
 
-        // Fonction pour vérifier si une URL est valide
-        function isValidURI(uri) {
-          try {
-            new URL(uri);
-            return true;
-          } catch (error) {
-            return false;
-          }
-        }
+    // Fonction pour vérifier si une URL est valide
+    function isValidURI(uri) {
+      try {
+        new URL(uri);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
 
     if (req.body.images !== undefined) {
       // Vérification de la présence et du type de `images`
