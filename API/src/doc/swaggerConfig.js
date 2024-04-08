@@ -24,7 +24,7 @@ const swaggerOptions = {
     ],
   },
   // Specify the correct path to your YAML file
-  apis: ["./doc.yaml"],
+  apis: ['./src/doc/doc.yaml'],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
