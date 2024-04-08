@@ -7,7 +7,7 @@ const host ='0.0.0.0';
 
 const swaggerUi = require('swagger-ui-express');
 
-const swaggerDocument = require('./doc/swaggerConfig.js');
+const swaggerDocument = require('./src/doc/swaggerConfig.js');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
    
@@ -18,22 +18,23 @@ mongoose.connect(process.env.connnexionMONGO);
 app.use(express.urlencoded());
 app.use(express.json());
 
-const certificationRoutes = require('./routes/certificationRoutes.js');
+const certificationRoutes = require('./src/routes/certificationRoutes.js');
 app.use('/', certificationRoutes);
 
-const skillCategoryRoutes = require('./routes/skillCategoryRoutes.js');
+const skillCategoryRoutes = require('./src/routes/skillCategoryRoutes.js');
 app.use('/', skillCategoryRoutes);
 
-const skillRoutes = require('./routes/skillRoutes.js');
+const skillRoutes = require('./src/routes/skillRoutes.js');
 app.use('/', skillRoutes);
 
-const projectRoutes = require('./routes/projectRoutes.js');
+const projectRoutes = require('./src/routes/projectRoutes.js');
 app.use('/', projectRoutes);
 
-const experienceRoutes = require('./routes/experienceRoutes.js');
+const experienceRoutes = require('./src/routes/experienceRoutes.js');
 app.use('/', experienceRoutes);
 
-const educationRoutes = require('./routes/educationRoutes.js');
+const educationRoutes = require('./src/routes/educationRoutes.js');
 app.use('/', educationRoutes);
+ 
 
 app.listen(port,host);

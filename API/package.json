@@ -2,10 +2,10 @@
   "name": "api",
   "version": "1.0.0",
   "description": "Portfolio API",
-  "main": "./src/app.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
