@@ -18,7 +18,7 @@
           <tr v-for="skill in skills" :key="skill._id">
             <td>{{ skill._id }}</td>
             <td>{{ skill.name }}</td>
-            <td>{{ skill.logo }}</td>
+            <td> {{ skill.logo }}</td>
             <td>{{ skill.rating }}</td>
             <td>
               <template v-if="skill.skillCategoryNames">
@@ -55,7 +55,6 @@
   <script>
   import axios from "axios";
   import config from "@/config.js"; // Importez le fichier de configuration
-  
   export default {
     data() {
       return {

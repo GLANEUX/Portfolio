@@ -3,20 +3,8 @@ const SkillCategory = require('../models/skillCategoryModel')
 const Project = require('../models/projectModel');
 const Experience = require('../models/experienceModel');
 const Education = require('../models/educationModel');
-const fs = require('fs');
-const path = require('path');
 
-// Méthode pour gérer l'upload de fichiers
-exports.uploadFile = (req, res) => {
 
-  // Vérifier s'il y a un fichier dans la requête
-  if (!req.file) {
-    return res.status(400).json({ message: 'Aucun fichier n\'a été sélectionné' });
-  }
-
-  res.status(200).json({ message: 'Fichier téléchargé avec succès' });
-
-};
 // POST /skill
 // Crée une skill
 exports.createSkill = async (req, res) => {
