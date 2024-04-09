@@ -4,16 +4,17 @@ const express = require('express')
 const app = express()
 const port = 3000
 const host ='0.0.0.0';
+const cors = require('cors'); // Importez le module cors
 
 const swaggerUi = require('swagger-ui-express');
-
 const swaggerDocument = require('./src/doc/swaggerConfig.js');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-   
 const mongoose = require("mongoose");
-  
+
 mongoose.connect(process.env.connnexionMONGO);
+
+app.use(cors()); // Utilisez le middleware cors
 
 app.use(express.urlencoded());
 app.use(express.json());
@@ -21,7 +22,7 @@ app.use(express.json());
 const certificationRoutes = require('./src/routes/certificationRoutes.js');
 app.use('/', certificationRoutes);
 
-const skillCategoryRoutes = require('./src/routes/skillCategoryRoutes.js');
+const skillCategoryRoutes = require('./src/routes/skillCategoryRoutes.js'); 
 app.use('/', skillCategoryRoutes);
 
 const skillRoutes = require('./src/routes/skillRoutes.js');

@@ -14,6 +14,7 @@
   "author": "Océane GLANEUX",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "moment-timezone": "^0.5.45",
     "mongodb": "^6.5.0",

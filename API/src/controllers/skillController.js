@@ -176,25 +176,24 @@ exports.updateSkill = async (req, res) => {
     }
 
 
+// Vérifier si le champ 'rating' est fourni et est un nombre valide entre 0 et 100
+if (req.body.rating !== undefined && req.body.rating !== "" && req.body.rating !== null) {
+  const rating = parseFloat(req.body.rating);
+  if (!isNaN(rating) && rating >= 0 && rating <= 100) {
+    updatedFields.rating = rating;
+  } else {
+    return res.status(400).json({ error: 'Invalid rating. Rating must be a number between 0 and 100' });
+  }
+} else {
+  updatedFields.rating = null; // ou toute autre valeur par défaut que vous souhaitez utiliser
+}
 
-
-
-
-    // Vérifier si le champ 'rating' est fourni et est un nombre valide entre 0 et 100
-    if (req.body.rating !== undefined) {
-      const rating = parseFloat(req.body.rating);
-      if (rating >= 0 && rating <= 100 && !isNaN(req.body.rating)) {
-        updatedFields.rating = rating;
-      } else {
-        return res.status(400).json({ error: 'Invalid rating. Rating must be a number between 0 and 100' });
-      }
-    }
 
 
     let skillCategory = req.body.skillCategory;
 
 
-    if (skillCategory === "null") {
+    if (skillCategory === "null" || skillCategory.length == 0) {
       updatedFields.skillCategory = null;
     } else {
 
@@ -215,7 +214,7 @@ exports.updateSkill = async (req, res) => {
         const invalidIds = [];
         let hasValidCategory = false; // Flag pour indiquer si au moins une catégorie de compétences valide est trouvée
         for (const categoryId of categories) {
-          const trimmedId = categoryId.trim();
+          const trimmedId = categoryId;
           if (trimmedId === '') {
             // Si l'ID est vide, ignorer cette itération
             continue;
@@ -235,7 +234,7 @@ exports.updateSkill = async (req, res) => {
             } else {
               hasValidCategory = true; // Mettre le flag à true si une catégorie de compétences valide est trouvée
             }
-          }
+          } 
         }
         if (invalidIds.length > 0) {
           // Si des identifiants invalides sont trouvés, renvoyer une erreur avec les IDs invalides
@@ -257,7 +256,7 @@ exports.updateSkill = async (req, res) => {
           updatedFields.skillCategory = categories.filter(id => id.trim() !== '');
         }
       } else {
-        skillCategory = undefined;
+        updatedFields.skillCategory = null;
       }
     }
 
@@ -294,14 +293,14 @@ exports.getSkillById = async (req, res) => {
       return res.status(400).json({ error: 'Not an ID' });
 
     }
+    // Rechercher la skill dans la base de données par son ID
+    const skill = await Skill.findById(req.params.id);
 
     // Vérifier si la skill existe
     if (!skill) {
       // Si la skill n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'Skill not found' });
     }
-    // Rechercher la skill dans la base de données par son ID
-    const skill = await Skill.findById(req.params.id);
 
     // Si la skill est trouvée, renvoyer une réponse avec la skill
     res.status(200).json(skill);
@@ -327,15 +326,15 @@ exports.deleteSkill = async (req, res) => {
       return res.status(400).json({ error: 'Not an ID' });
 
     }
-
+    // Rechercher la skill à supprimer dans la base de données par son ID et la supprimer
+    const skill = await Skill.findByIdAndDelete(req.params.id);
 
     // Vérifier si la skill existe
     if (!skill) {
       // Si la skill n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'Skill not found' });
     }
-    // Rechercher la skill à supprimer dans la base de données par son ID et la supprimer
-    const skill = await Skill.findByIdAndDelete(req.params.id);
+
 
     // Si la skill est trouvée et supprimée avec succès, renvoyer une réponse avec le code 200
     res.status(200).send('Skill deleted');

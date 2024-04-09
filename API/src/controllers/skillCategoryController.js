@@ -5,15 +5,18 @@ const Skill = require('../models/skillModel');
 // Crée une skillCategory
 exports.createSkillCategory = async (req, res) => {
   try {
-    // Vérifier si les champs obligatoires sont présents dans la requête
-    if (!req.body.name) {
-      return res.status(400).json({ error: 'Missing required parameters: name' });
-    }
+
 
     // Extraire les données de la requête POST en supprimant les espaces avant et après (trim)
     const name = req.body.name.trim();
 
-    // Créer une nouvelle instance de SkillCategory avec les données
+     // Vérifier si les champs obligatoires sont présents dans la requête
+    if (!name) {
+      return res.status(400).json({ error: 'Missing required parameters: name' });
+    }
+
+
+       // Créer une nouvelle instance de SkillCategory avec les données
     const newSkillCategory = new SkillCategory({
       name
     });
@@ -109,15 +112,15 @@ exports.getSkillCategoryById = async (req, res) => {
       return res.status(400).json({ error: 'Not an ID' });
 
     }
-
+    // Rechercher la skillCategory dans la base de données par son ID
+    const skillCategory = await SkillCategory.findById(req.params.id);
 
     // Vérifier si la skillCategory existe
     if (!skillCategory) {
       // Si la skillCategory n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'SkillCategory not found' });
     }
-    // Rechercher la skillCategory dans la base de données par son ID
-    const skillCategory = await SkillCategory.findById(req.params.id);
+
 
     // Si la skillCategory est trouvée, renvoyer une réponse avec la skillCategory
     res.status(200).json(skillCategory);
