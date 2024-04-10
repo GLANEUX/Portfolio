@@ -14,14 +14,17 @@ const storage = multer.diskStorage({
 
     // Concaténer la suite de nombres avec le nom d'origine du fichier
     const modifiedFileName = `${randomNumbers}-${fileExtension}`;
+    
     cb(null, modifiedFileName);
   }
 });
 
+
 // Initialisation de multer avec les options de stockage
 const upload = multer({ storage: storage });
-
 // Middleware pour gérer le téléchargement de fichiers
 const fileUploadMiddleware = upload.single('file');
+
+
 
 module.exports = fileUploadMiddleware;

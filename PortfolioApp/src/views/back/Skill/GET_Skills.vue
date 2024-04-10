@@ -18,7 +18,7 @@
           <tr v-for="skill in skills" :key="skill._id">
             <td>{{ skill._id }}</td>
             <td>{{ skill.name }}</td>
-            <td> {{ skill.logo }}</td>
+            <td><img :src="`${URLapi}${skill.logo}`" alt="" width=25px ></td>
             <td>{{ skill.rating }}</td>
             <td>
               <template v-if="skill.skillCategoryNames">
@@ -60,7 +60,8 @@
       return {
         skills: [], // Tableau pour stocker les compétences récupérées
         deleteConfirmation: null, // Stocke temporairement les informations de confirmation de suppression
-        deleteSuccessMessage: "" // Message de succès après la suppression
+        deleteSuccessMessage: "", // Message de succès après la suppression
+        URLapi: config.apiUrl
       };
     },
     mounted() {

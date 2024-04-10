@@ -63,39 +63,31 @@ export default {
     },
     async submitForm() {
       const file = this.$refs.logo.files[0];
+
+      // Créer un objet FormData pour envoyer le fichier du logo
       const formDataUpload = new FormData();
       formDataUpload.append('file', file);
+      formDataUpload.append('name', this.name);
+      formDataUpload.append('rating', this.rating);
+      formDataUpload.append('skillCategory', this.selectedCategories);
+
 
       try {
-        const responseUpload = await axios.post(`${config.apiUrl}/upload`, formDataUpload, {
+        // Envoi de la requête POST pour télécharger le fichier du logo
+        const responseskill = await axios.post(`${config.apiUrl}/skill`, formDataUpload, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         });
 
-        console.log('Fichier téléchargé avec succès');
-        this.logo = responseUpload.data.filename; // Réinitialiser le champ de logo
 
-        // Autres actions après le téléchargement réussi, comme l'envoi des données de compétence
-      } catch (error) {
-        console.error('Erreur lors du téléchargement du fichier :', error);
-      }
-
-      try {
-        // Envoi de la requête POST pour ajouter une nouvelle compétence
-        const responseskill = await axios.post(`${config.apiUrl}/skill`, {
-          name: this.name,
-          logo: undefined,
-          rating: this.rating,
-          skillCategory: this.selectedCategories // Utiliser les catégories sélectionnées
-        });
 
         // Affichage du succès
         this.success = "Nouvelle compétence ajoutée : " + responseskill.data.name;
 
         // Réinitialisation des champs après l'ajout
         this.name = "";
-        this.logo = "";
+        this.logo = undefined;
         this.rating = 0;
         this.selectedCategories = [];
 
@@ -118,7 +110,7 @@ export default {
       this.success = null; // Effacer le message de succès
       this.error = null; // Effacer les erreurs
       this.name = ""; // Réinitialiser le champ de nom
-      this.logo = ""; // Réinitialiser le champ de logo
+      this.logo = undefined; // Réinitialiser le champ de logo
       this.rating = undefined; // Réinitialiser le champ de note
       this.selectedCategories = []; // Réinitialiser les catégories sélectionnées
     }

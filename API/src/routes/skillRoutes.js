@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const skillController = require('../controllers/skillController');
+const fileUploadMiddleware = require('../middleware/fileUploadMiddleware');
 
 
 // /skill
 router
   .route('/skill')
-  .post(skillController.createSkill);
+  .post(fileUploadMiddleware, skillController.createSkill);
 
 // /skills
 router

@@ -8,9 +8,9 @@ const Education = require('../models/educationModel');
 // Crée une skill
 exports.createSkill = async (req, res) => {
   try {
-
+    let logo = "/uploads/"+req.file.filename;
     // Extraire les données de la requête POST en supprimant les espaces avant et après (trim)
-    let { name, logo, rating, skillCategory } = req.body;
+    let { name, rating, skillCategory } = req.body;
 
     // Vérifier si les champs obligatoires sont présents dans la requête
     if (!name || name.trim() === "") {
