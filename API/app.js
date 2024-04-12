@@ -15,7 +15,7 @@ const mongoose = require("mongoose");
 mongoose.connect(process.env.connnexionMONGO);
 
 app.use(cors()); // Utilisez le middleware cors
-
+ 
 app.use(express.urlencoded());
 app.use(express.json());
 

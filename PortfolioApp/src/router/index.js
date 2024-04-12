@@ -6,6 +6,13 @@ import PATCH_SkillCategory from '../views/back/SkillCategory/PATCH_SkillCategory
 import GET_Skills from '../views/back/Skill/GET_Skills.vue'; // Importez votre composant de formulaire
 import POST_Skill from '../views/back/Skill/POST_Skill.vue'; // Importez votre composant de formulaire
 import PATCH_Skill from '../views/back/Skill/PATCH_Skill.vue';
+
+
+import GET_Certifications from '../views/back/Certification/GET_Certifications.vue'; 
+import POST_Certification from '../views/back/Certification/POST_Certification.vue';
+import PATCH_Certification from '../views/back/Certification/PATCH_Certification.vue';
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -15,14 +22,14 @@ const router = createRouter({
     //   component: HomeView
     // },
     {
-      path: '/add-skill-category', // Chemin de votre formulaire de catégorie de compétences
+      path: '/add-skill-category', 
       name: 'POST-skillCategory',
-      component: POST_SkillCategory // Composant de formulaire de catégorie de compétences
+      component: POST_SkillCategory 
     },
     {
-      path: '/get-skill-categorys', // Chemin de votre formulaire de catégorie de compétences
-      name: 'GET-SkillCategory',
-      component: GET_SkillCategory // Composant de formulaire de catégorie de compétences
+      path: '/get-skill-categorys', 
+      name: 'GET-SkillCategorys',
+      component: GET_SkillCategory 
     },
     {
       path: '/edit-skill-category/:id',
@@ -30,21 +37,35 @@ const router = createRouter({
       component: PATCH_SkillCategory
     },
     {
-      path: '/add-skill', // Chemin de votre formulaire de catégorie de compétences
+      path: '/add-skill', 
       name: 'POST-skill',
-      component: POST_Skill // Composant de formulaire de catégorie de compétences
+      component: POST_Skill 
     },
     {
-      path: '/get-skills', // Chemin de votre formulaire de catégorie de compétences
-      name: 'GET-Skill',
-      component: GET_Skills // Composant de formulaire de catégorie de compétences
+      path: '/get-skills', 
+      name: 'GET-Skills',
+      component: GET_Skills 
     },
     {
       path: '/edit-skill/:id',
       name: 'edit-Skill',
       component: PATCH_Skill
     },
-    
+    {
+      path: '/add-certification', 
+      name: 'POST-certification',
+      component: POST_Certification
+    },
+    {
+      path: '/get-certifications', 
+      name: 'GET-certifications',
+      component: GET_Certifications
+    },
+    {
+      path: '/edit-certification/:id',
+      name: 'edit-certification',
+      component: PATCH_Certification
+    }
   ]
 });
 

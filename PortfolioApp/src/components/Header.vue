@@ -22,7 +22,18 @@
             </div>
           </div>
         </li>
+              <!-- Dropdown pour les catégories de Certification -->
+      <li>
+          <div class="dropdown">
+            <button class="dropbtn">Catégories de Certification</button>
+            <div class="dropdown-content">
+              <router-link to="/add-certification">Ajouter une catégorie de Certification</router-link>
+              <router-link to="/get-certifications">Liste des catégories de Certification</router-link>
+            </div>
+          </div>
+        </li>
       </ul>
+
     </nav>
   </header>
 </template>
