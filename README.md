@@ -17,10 +17,12 @@ Via un débug la constation est que c'est le faite (dans la vue) de faire passer
 ## Installation
 ```
 $ cd API
+$ npm i
 $ npm start
 ```
 ```
 $ cd PortfolioApp
+$ npm i
 $ npm run dev
 ```
 
