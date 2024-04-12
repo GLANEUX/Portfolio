@@ -9,9 +9,16 @@
       <input type="number" id="rating" v-model="rating" min="0" max="100">
       <br>
       <label>Catégories de compétences :</label>
-      <div v-for="category in skillCategories" :key="category._id">
-        <input type="checkbox" :id="category._id" :value="category._id" v-model="selectedCategories">
-        <label :for="category._id">{{ category.name }}</label>
+      <div>
+        <button
+          v-for="category in skillCategories"
+          :key="category._id"
+          :class="{ selected: isSelected(category._id) }"
+          @click="toggleCategory(category._id)"
+          type="button"
+        >
+          {{ category.name }}
+        </button>
       </div>
       <button type="submit">Ajouter</button>
     </form>
@@ -37,7 +44,7 @@ export default {
   data() {
     return {
       name: "", // Nom de la compétence
-      logo: "", // URL du logo de la compétence
+      logo: undefined, // URL du logo de la compétence
       rating: undefined, // Note de la compétence
       selectedCategories: [], // Catégories de compétences sélectionnées
       skillCategories: [], // Liste des catégories de compétences
@@ -61,24 +68,56 @@ export default {
         console.error("Erreur lors du chargement des catégories de compétences :", error);
       }
     },
+    toggleCategory(categoryId) {
+      // Vérifier si la catégorie est déjà sélectionnée
+      if (this.isSelected(categoryId)) {
+        // Si la catégorie est déjà sélectionnée, la supprimer de la liste des catégories sélectionnées
+        this.selectedCategories = this.selectedCategories.filter(id => id !== categoryId);
+      } else {
+        // Sinon, ajouter la catégorie à la liste des catégories sélectionnées
+        this.selectedCategories.push(categoryId);
+      }
+    },
+    isSelected(categoryId) {
+      // Vérifier si la catégorie est déjà sélectionnée
+      return this.selectedCategories.includes(categoryId);
+    },
     async submitForm() {
       const file = this.$refs.logo.files[0];
 
+
+
+//---------------------------------------------------------------------------------------
+// Debug DEBUT
+//---------------------------------------------------------------------------------------
+
+
       // Créer un objet FormData pour envoyer le fichier du logo
       const formDataUpload = new FormData();
+      //formDataUpload.append('name', this.name);
+      //formDataUpload.append('rating', this.rating);
+      // formDataUpload.append('skillCategory', this.selectedCategories);
       formDataUpload.append('file', file);
-      formDataUpload.append('name', this.name);
-      formDataUpload.append('rating', this.rating);
-      formDataUpload.append('skillCategory', this.selectedCategories);
 
+      console.log('------------------------ ON EST ICI -------------------------------',file, this.name)
 
       try {
         // Envoi de la requête POST pour télécharger le fichier du logo
-        const responseskill = await axios.post(`${config.apiUrl}/skill`, formDataUpload, {
+        const responseskill = await axios.post(`${config.apiUrl}/skill`, {
+          name: this.name,
+          rating : this.rating,
+          skillCategory : this.selectedCategories,
+          // formDataUpload
+        }
+        , {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         });
+
+//---------------------------------------------------------------------------------------
+// Debug FIN
+//---------------------------------------------------------------------------------------
 
 
 
@@ -88,11 +127,16 @@ export default {
         // Réinitialisation des champs après l'ajout
         this.name = "";
         this.logo = undefined;
-        this.rating = 0;
+        this.rating = undefined;
         this.selectedCategories = [];
 
         // Effacer les messages d'erreur précédents
         this.error = null;
+
+        // Redirection automatique vers la liste des compétences après 3 secondes
+        setTimeout(() => {
+          this.redirectToSkillList();
+        }, 3000);
       } catch (error) {
         // Gestion des erreurs
         this.error = "Erreur lors de l'ajout de la compétence : " + error.response.data.error;
@@ -119,7 +163,6 @@ export default {
     // Efface la valeur du champ rating
     this.rating = undefined;
   }
-
 };
 </script>
 
@@ -130,5 +173,10 @@ export default {
 
 .success {
   color: green;
+}
+
+button.selected {
+  background-color: #007bff;
+  color: #fff;
 }
 </style>

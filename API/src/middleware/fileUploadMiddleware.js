@@ -10,8 +10,9 @@ const storage = multer.diskStorage({
     const randomNumbers = Math.random().toString(36).substring(2, 8);
     // Récupérer l'extension du fichier
     const fileExtension = file.originalname.replace(/\s+/g, '_');
-    // Vérifier si l'extension est .jpg ou .png
 
+
+     
     // Concaténer la suite de nombres avec le nom d'origine du fichier
     const modifiedFileName = `${randomNumbers}-${fileExtension}`;
     
@@ -28,3 +29,9 @@ const fileUploadMiddleware = upload.single('file');
 
 
 module.exports = fileUploadMiddleware;
+
+
+
+
+
+    

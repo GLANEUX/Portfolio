@@ -4,11 +4,17 @@ const Project = require('../models/projectModel');
 const Experience = require('../models/experienceModel');
 const Education = require('../models/educationModel');
 
+
+//---------------------------------------------------------------------------------------
+// Debug DEBUT
+//---------------------------------------------------------------------------------------
+
+
 // POST /skill
 // Crée une skill
-exports.createSkill = async (req, res) => {
+exports.createSkill = async (req, res, file) => {
   try {
-    let logo = "/uploads/"+req.file.filename;
+    console.log('------------------------ ON EST ICI -------------------------------', req.body)
     // Extraire les données de la requête POST en supprimant les espaces avant et après (trim)
     let { name, rating, skillCategory } = req.body;
 
@@ -17,38 +23,25 @@ exports.createSkill = async (req, res) => {
       return res.status(400).json({ error: 'Missing required parameters: name' });
     }
 
-    // Vérifier si le logo est fourni et s'il a une extension .jpg ou .png
-    const logoRegex = /[^.\s][a-zA-Z0-9\s-]*\.(jpg|png)$/i;
-    if (logo) {
-      // Remplacer les espaces par des underscores dans le logo
-      const processedLogo = logo.trim().replace(/ /g, '_');
-      // Vérifier si le logo a une extension valide
-      if (!logoRegex.test(processedLogo)) {
-        return res.status(400).json({ error: 'Logo must be a URL with .jpg or .png extension and contain a name' });
-      }
+    if (rating == "undefined") {
+      rating = undefined;
     }
-
     // Vérifier si le rating est valide (compris entre 0 et 100)
     if (rating !== undefined && (isNaN(rating) || rating < 0 || rating > 100)) {
       return res.status(400).json({ error: 'Invalid rating. Rating must be a number between 0 and 100' });
     }
 
-
-
-
-
     // Vérifier si skillCategory est fourni 
     if (skillCategory !== undefined) {
-      // Si skillCategory n'est pas un tableau, le transformer en tableau
-      const categories = Array.isArray(skillCategory) ? skillCategory : [skillCategory];
+      // Diviser la chaîne d'IDs en un tableau
+      const categories = skillCategory.split(',');
       const categoryIdRegex = /^[0-9a-fA-F]{24}$/;
-
       // Ensemble pour stocker les ID déjà rencontrés
       const seenIds = new Set();
       // Liste pour stocker les IDs en double
       const duplicateIds = [];
-
       // Vérifier que chaque ID de skillCategory existe
+      const validIds = [];
       const invalidIds = [];
       const notFoundIds = [];
       let hasValidCategory = false; // Flag pour indiquer si au moins une catégorie de compétences valide est trouvée
@@ -71,10 +64,12 @@ exports.createSkill = async (req, res) => {
             // Si la catégorie n'est pas trouvée, ajouter à la liste des IDs invalides
             notFoundIds.push(trimmedId);
           } else {
-            hasValidCategory = true; // Mettre le flag à true si une catégorie de compétences valide est trouvée
+            // Ajouter l'ID à la liste des IDs valides
+            validIds.push(trimmedId);
           }
         }
       }
+
       if (invalidIds.length > 0) {
         // Si des identifiants invalides sont trouvés, renvoyer une erreur
         return res.status(400).json({ error: `Invalid skillCategory IDs: ${invalidIds.join(', ')}` });
@@ -87,18 +82,62 @@ exports.createSkill = async (req, res) => {
         // Si des IDs en double sont trouvés, renvoyer une erreur différente
         return res.status(400).json({ error: `Duplicate skillCategory IDs: ${duplicateIds.join(', ')}` });
       }
-      if (!hasValidCategory) {
-        // Si aucune catégorie de compétences valide n'est trouvée, définir skillCategory à undefined
-        skillCategory = undefined;
-      }
+
+      // Utiliser validIds pour la création de la nouvelle compétence
+      skillCategory = validIds;
+    }
+
+
+
+
+    let logo
+    if (!req.file) {
+      logo = undefined;
+    } else {
+      // téléchargement de l'image à insérer :
+/*
+      const multer = require('multer');
+
+      // Définition du stockage pour multer
+      const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+          cb(null, './src/uploads/');
+        },
+        filename: function (req, file, cb) {
+          // Générer une suite de nombres aléatoires
+          const randomNumbers = Math.random().toString(36).substring(2, 8);
+          // Récupérer l'extension du fichier
+          const fileExtension = file.originalname.replace(/\s+/g, '_');
+
+
+
+          // Concaténer la suite de nombres avec le nom d'origine du fichier
+          const modifiedFileName = `${randomNumbers}-${fileExtension}`;
+
+          cb(null, modifiedFileName);
+        }
+      });
+
+
+      // Initialisation de multer avec les options de stockage
+      const upload = multer({ storage: storage });
+      // Middleware pour gérer le téléchargement de fichiers
+      const fileUploadMiddleware = upload.single('file');
+
+
+
+      module.exports = fileUploadMiddleware;
+*/
+
+      logo = "/uploads/" + req.file.filename;
     }
 
 
     // Créer une nouvelle instance de Skill avec les données
     const newSkill = new Skill({
       name: name.trim(),
-      logo: logo ? logo.trim().replace(/ /g, '_') : undefined,
-      rating,
+      logo: logo,
+      rating: rating,
       skillCategory: skillCategory !== undefined ? (Array.isArray(skillCategory) ? skillCategory.filter(id => id.trim() !== '') : [skillCategory.trim()]) : null
     });
 
@@ -116,6 +155,25 @@ exports.createSkill = async (req, res) => {
     res.status(500).json({ error: 'An unexpected error occurred on the server.' });
   }
 };
+
+
+//---------------------------------------------------------------------------------------
+// Debug DEBUT
+//---------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // GET /skills
 // Récupère toutes les skills
@@ -176,17 +234,17 @@ exports.updateSkill = async (req, res) => {
     }
 
 
-// Vérifier si le champ 'rating' est fourni et est un nombre valide entre 0 et 100
-if (req.body.rating !== undefined && req.body.rating !== "" && req.body.rating !== null) {
-  const rating = parseFloat(req.body.rating);
-  if (!isNaN(rating) && rating >= 0 && rating <= 100) {
-    updatedFields.rating = rating;
-  } else {
-    return res.status(400).json({ error: 'Invalid rating. Rating must be a number between 0 and 100' });
-  }
-} else {
-  updatedFields.rating = null; // ou toute autre valeur par défaut que vous souhaitez utiliser
-}
+    // Vérifier si le champ 'rating' est fourni et est un nombre valide entre 0 et 100
+    if (req.body.rating !== undefined && req.body.rating !== "" && req.body.rating !== null) {
+      const rating = parseFloat(req.body.rating);
+      if (!isNaN(rating) && rating >= 0 && rating <= 100) {
+        updatedFields.rating = rating;
+      } else {
+        return res.status(400).json({ error: 'Invalid rating. Rating must be a number between 0 and 100' });
+      }
+    } else {
+      updatedFields.rating = null; // ou toute autre valeur par défaut que vous souhaitez utiliser
+    }
 
 
 
@@ -234,7 +292,7 @@ if (req.body.rating !== undefined && req.body.rating !== "" && req.body.rating !
             } else {
               hasValidCategory = true; // Mettre le flag à true si une catégorie de compétences valide est trouvée
             }
-          } 
+          }
         }
         if (invalidIds.length > 0) {
           // Si des identifiants invalides sont trouvés, renvoyer une erreur avec les IDs invalides
