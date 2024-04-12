@@ -115,15 +115,14 @@ exports.getCertificationById = async (req, res) => {
       return res.status(400).json({ error: 'Not an ID' });
 
     }
-    // Rechercher la certification dans la base de données par son ID
-    const certification = await Certification.findById(req.params.id);
-    
+
     // Vérifier si la certification existe
     if (!certification) {
       // Si la certification n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'Certification not found' });
     }
-
+    // Rechercher la certification dans la base de données par son ID
+    const certification = await Certification.findById(req.params.id);
 
     // Si la certification est trouvée, renvoyer une réponse avec la certification
     res.status(200).json(certification);
@@ -145,19 +144,17 @@ exports.deleteCertification = async (req, res) => {
     // Recherche si l'id est correcte
     const skillIdRegex = /^[0-9a-fA-F]{24}$/;
     if (!skillIdRegex.test(req.params.id.trim())) {
-      return res.status(400).json({ error: 'Not an ID' }); 
+      return res.status(400).json({ error: 'Not an ID' });
 
     }
-
-        // Rechercher la certification à supprimer dans la base de données par son ID et la supprimer
-        const certification = await Certification.findByIdAndDelete(req.params.id);
 
     // Vérifier si la certification existe
     if (!certification) {
       // Si la certification n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'Certification not found' });
     }
-
+    // Rechercher la certification à supprimer dans la base de données par son ID et la supprimer
+    const certification = await Certification.findByIdAndDelete(req.params.id);
 
     // Si la certification est trouvée et supprimée avec succès, renvoyer une réponse avec le code 200
     res.status(200).send('Certification deleted');

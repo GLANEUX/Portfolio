@@ -8,7 +8,13 @@ const Education = require('../models/educationModel');
 // Crée une skill
 exports.createSkill = async (req, res) => {
   try {
-    let logo = "/uploads/"+req.file.filename;
+  let logo
+    if(!req.file){
+      logo = undefined;
+    }else{
+      logo = "/uploads/"+req.file.filename;
+    }
+
     // Extraire les données de la requête POST en supprimant les espaces avant et après (trim)
     let { name, rating, skillCategory } = req.body;
 
@@ -17,24 +23,13 @@ exports.createSkill = async (req, res) => {
       return res.status(400).json({ error: 'Missing required parameters: name' });
     }
 
-    // Vérifier si le logo est fourni et s'il a une extension .jpg ou .png
-    const logoRegex = /[^.\s][a-zA-Z0-9\s-]*\.(jpg|png)$/i;
-    if (logo) {
-      // Remplacer les espaces par des underscores dans le logo
-      const processedLogo = logo.trim().replace(/ /g, '_');
-      // Vérifier si le logo a une extension valide
-      if (!logoRegex.test(processedLogo)) {
-        return res.status(400).json({ error: 'Logo must be a URL with .jpg or .png extension and contain a name' });
-      }
+    if(rating == "undefined"){
+      rating = undefined;
     }
-
     // Vérifier si le rating est valide (compris entre 0 et 100)
     if (rating !== undefined && (isNaN(rating) || rating < 0 || rating > 100)) {
       return res.status(400).json({ error: 'Invalid rating. Rating must be a number between 0 and 100' });
     }
-
-
-
 
 
     // Vérifier si skillCategory est fourni 
@@ -47,7 +42,6 @@ exports.createSkill = async (req, res) => {
       const seenIds = new Set();
       // Liste pour stocker les IDs en double
       const duplicateIds = [];
-
       // Vérifier que chaque ID de skillCategory existe
       const invalidIds = [];
       const notFoundIds = [];
@@ -97,8 +91,8 @@ exports.createSkill = async (req, res) => {
     // Créer une nouvelle instance de Skill avec les données
     const newSkill = new Skill({
       name: name.trim(),
-      logo: logo ? logo.trim().replace(/ /g, '_') : undefined,
-      rating,
+      logo: logo,
+      rating: rating,
       skillCategory: skillCategory !== undefined ? (Array.isArray(skillCategory) ? skillCategory.filter(id => id.trim() !== '') : [skillCategory.trim()]) : null
     });
 

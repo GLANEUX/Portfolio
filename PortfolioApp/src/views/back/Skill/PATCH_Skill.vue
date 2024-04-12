@@ -4,16 +4,24 @@
     <form @submit.prevent="submitForm">
       <label for="name">Nom :</label>
       <input type="text" id="name" v-model="name" required>
-      <label for="logo">Logo :</label>
-      <input type="text" id="logo" v-model="logo">
+
       <label for="rating">Note :</label>
       <input type="number" id="rating" v-model="rating" min="0" max="100">
       <br>
       <label>Catégories de compétences :</label>
-      <div v-for="category in skillCategories" :key="category._id">
-        <input type="checkbox" :id="category._id" :value="category._id" v-model="selectedCategories">
-        <label :for="category._id">{{ category.name }}</label>
+      <div>
+        <button
+          v-for="category in skillCategories"
+          :key="category._id"
+          :class="{ selected: isSelected(category._id) }"
+          @click="toggleCategory(category._id)"
+          :value="category._id"
+          type="button"
+        >
+          {{ category.name }}
+        </button>
       </div>
+
       <button type="submit">Modifier</button>
       <button type="button" @click="redirectToSkillList">Annuler</button>
     </form>
@@ -59,6 +67,7 @@ export default {
     // Charger les détails de la compétence depuis l'API
     this.loadSkillDetails();
   },
+  
   methods: {
     async loadSkillCategories() {
       try {
@@ -77,7 +86,6 @@ export default {
         const response = await axios.get(`${config.apiUrl}/skill/${this.skillId}`);
         // Mettre à jour les valeurs des champs avec les détails de la compétence récupérée
         this.name = response.data.name;
-        this.logo = response.data.logo;
         this.rating = response.data.rating;
         if (response.data.skillCategory !== null) {
           this.selectedCategories = response.data.skillCategory;
@@ -86,6 +94,20 @@ export default {
         // Gestion des erreurs
         console.error("Erreur lors du chargement des détails de la compétence :", error);
       }
+    },
+    toggleCategory(categoryId) {
+      // Vérifier si la catégorie est déjà sélectionnée
+      if (this.isSelected(categoryId)) {
+        // Si la catégorie est déjà sélectionnée, la supprimer de la liste des catégories sélectionnées
+        this.selectedCategories = this.selectedCategories.filter(id => id !== categoryId);
+      } else {
+        // Sinon, ajouter la catégorie à la liste des catégories sélectionnées
+        this.selectedCategories.push(categoryId);
+      }
+    },
+    isSelected(categoryId) {
+      // Vérifier si la catégorie est déjà sélectionnée
+      return this.selectedCategories.includes(categoryId);
     },
     async submitForm() {
       try {

@@ -22,13 +22,33 @@
             </div>
           </div>
         </li>
-              <!-- Dropdown pour les catégories de Certification -->
-      <li>
+        <!-- Dropdown pour les catégories de Certification -->
+        <li>
           <div class="dropdown">
             <button class="dropbtn">Catégories de Certification</button>
             <div class="dropdown-content">
               <router-link to="/add-certification">Ajouter une catégorie de Certification</router-link>
               <router-link to="/get-certifications">Liste des catégories de Certification</router-link>
+            </div>
+          </div>
+        </li>
+        <!-- Dropdown pour les catégories de education -->
+        <li>
+          <div class="dropdown">
+            <button class="dropbtn">Catégories de education</button>
+            <div class="dropdown-content">
+              <router-link to="/add-education">Ajouter une catégorie de education</router-link>
+              <router-link to="/get-educations">Liste des catégories de education</router-link>
+            </div>
+          </div>
+        </li>
+        <!-- Dropdown pour les catégories de education -->
+        <li>
+          <div class="dropdown">
+            <button class="dropbtn">Catégories de experiences</button>
+            <div class="dropdown-content">
+              <router-link to="/add-experience">Ajouter une catégorie de experiences</router-link>
+              <router-link to="/get-experiences">Liste des catégories de experiences</router-link>
             </div>
           </div>
         </li>
