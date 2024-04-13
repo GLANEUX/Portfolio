@@ -10,9 +10,10 @@
       <button type="button" @click="resetForm">Réinitialiser</button>
     </form>
     <!-- Affichage du message et du bouton de retour à la liste -->
-    <div v-if="showSuccessMessage">
-      <p>{{ successMessage }}</p>
-      <button @click="redirectToCategoryList">Retour à la liste</button>
+    <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="success" class="success">{{ success }}</div>
+    <div v-if="success">
+      <button @click="redirectToCertificationList">Voir la liste des certification</button>
     </div>
   </div>
 </template>
@@ -27,8 +28,8 @@ export default {
       originalName: "", // Champ pour stocker le nom d'origine de la catégorie de compétences
       name: "", // Champ pour stocker le nom de la catégorie de compétences
       categoryId: "", // Champ pour stocker l'ID de la catégorie de compétences
-      showSuccessMessage: false, // Boolean pour contrôler l'affichage du message de succès
-      successMessage: "" // Message de succès à afficher
+      error: null,
+      success: null,
     };
   },
   created() {
@@ -55,19 +56,20 @@ export default {
         await axios.patch(`${config.apiUrl}/skillCategory/${this.categoryId}`, {
           name: this.name
         });
-        // Afficher le message de succès et le bouton de retour à la liste
-        this.showSuccessMessage = true;
-        this.successMessage = `"${this.originalName}" modifié`;
+        // Affichage du succès
+        this.success = this.name + " modifié";
+
+        // Effacer les messages d'erreur précédents
+        this.error = null;
         // Masquer le message de succès après 3 secondes
         setTimeout(() => {
-          this.showSuccessMessage = false;
+          this.success = null; 
           // Redirection vers la page des catégories de compétences après 3 secondes
-          this.redirectToCategoryList();
+          this.redirectToCertificationList();
         }, 3000);
       } catch (error) {
-        // Gestion des erreurs
-        console.error("Erreur lors de la modification de la catégorie de compétences :", error);
-      }
+        this.error = "Erreur lors de la modification de la catégorie de compétences : " + error.response.data.error;
+        this.success = null; }
     },
     resetForm() {
       // Réinitialiser le champ name avec le nom d'origine
@@ -82,11 +84,12 @@ export default {
 </script>
 
 <style>
-/* Styles CSS facultatifs pour le formulaire */
-input[type="text"] {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  box-sizing: border-box;
+.error {
+  color: red;
 }
+
+.success {
+  color: green;
+}
+
 </style>

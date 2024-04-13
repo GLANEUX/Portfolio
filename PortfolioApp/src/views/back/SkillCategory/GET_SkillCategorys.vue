@@ -1,6 +1,13 @@
 <template>
   <div>
     <h1>Liste des catégories de compétences</h1>
+    <div v-if="categories.length === 0">
+      <p>Aucune skillcategories pour le moment.</p>
+      <!-- Lien vers la création d'une nouvelle éducation -->
+      <router-link to="/add-skill-category">Créer une nouvelle skillcategories</router-link>
+    </div>
+
+    <div v-else>
     <table>
       <thead>
         <tr>
@@ -18,23 +25,24 @@
           <td>{{ category.created_at }}</td>
           <td>{{ category.updated_at }}</td>
           <td>
-            <button @click="confirmDelete(category)">Supprimer</button>
-            <button @click="redirectToEdit(category._id)">Modifier</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              <button @click="confirmDelete(certification)">Supprimer</button>
+              <button @click="redirectToEdit(certification._id)">Modifier</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-    <!-- Confirmation de suppression -->
-    <div v-if="deleteConfirmation" class="delete-confirmation">
-      <p>Voulez-vous vraiment supprimer {{ deleteConfirmation.name }} ?</p>
-      <button @click="cancelDelete">Annuler</button>
-      <button @click="deleteConfirmed">Confirmer</button>
-    </div>
+      <!-- Confirmation de suppression -->
+      <div v-if="deleteConfirmation" class="delete-confirmation">
+        <p>Voulez-vous vraiment supprimer {{ deleteConfirmation.name }} ?</p>
+        <button @click="cancelDelete">Annuler</button>
+        <button @click="deleteConfirmed">Confirmer</button>
+      </div>
 
-    <!-- Message de succès après la suppression -->
-    <div v-if="deleteSuccessMessage" class="delete-success">
-      {{ deleteSuccessMessage }} supprimé avec succès.
+      <!-- Message de succès après la suppression -->
+      <div v-if="deleteSuccessMessage" class="delete-success">
+        {{ deleteSuccessMessage }} supprimé avec succès.
+      </div>
     </div>
   </div>
 </template>

@@ -15,7 +15,6 @@
     <!-- Boutons après succès -->
     <div v-if="success">
       <button @click="redirectToCategoryList">Voir la liste des catégories</button>
-      <button @click="addNewCategory">Ajouter une nouvelle catégorie</button>
     </div>
   </div>
 </template>
@@ -43,8 +42,7 @@ export default {
         // Affichage du succès
         this.success = "Nouvelle catégorie de compétences ajoutée : " + response.data.name;
         
-        // Réinitialisation du champ "name" après l'ajout
-        this.name = "";
+;
         
         // Effacer les messages d'erreur précédents
         this.error = null;
@@ -60,12 +58,7 @@ export default {
       // Redirection vers la liste des catégories de compétences
       this.$router.push('/get-skill-categorys');
     },
-    addNewCategory() {
-      // Réinitialiser le formulaire pour ajouter une nouvelle catégorie
-      this.success = null; // Effacer le message de succès
-      this.error = null; // Effacer les erreurs
-      this.name = ""; // Réinitialiser le champ de nom
-    }
+   
   }
 };
 </script>

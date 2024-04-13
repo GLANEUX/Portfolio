@@ -123,7 +123,7 @@ export default {
         this.error = null;
         // Masquer le message de succès après 3 secondes
         setTimeout(() => {
-          this.showSuccessMessage = false;
+          this.success = null; 
           // Redirection vers la page des catégories de compétences après 3 secondes
           this.redirectToCertificationList();
         }, 3000);
