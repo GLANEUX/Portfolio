@@ -1,33 +1,36 @@
 const Experience = require('../models/experienceModel');
 const Skills = require('../models/skillModel');
 
-// POST /experience
-// Crée une Experience
+//! POST /experience
+//! Crée une Experience
 exports.createExperience = async (req, res) => {
   try {
     // Extraire les données de la requête POST en supprimant les espaces avant et après (trim)
-    let { company, job_title, details, skills,start_date, end_date } = req.body;
+    let { company, job_title, details, skills, start_date, end_date } = req.body;
 
-
-    
     // Vérifier si les champs obligatoires sont présents dans la requête
     if (!company || company.trim() === "") {
       return res.status(400).json({ error: 'Missing required parameters: company' });
     }
+
+    // Vérifier si les champs obligatoires sont présents dans la requête
     if (!job_title || job_title.trim() === "") {
       return res.status(400).json({ error: 'Missing required parameters: job_title' });
     }
 
 
-            // Vérifier si les champs obligatoires sont présents dans la requête
-            if (!start_date || start_date.trim() === "") {
-              return res.status(400).json({ error: 'Missing required parameters: start_date' });
-            }
-    
-                // Vérifier si les champs obligatoires sont présents dans la requête
-                if (!end_date || end_date.trim() === "") {
-                  return res.status(400).json({ error: 'Missing required parameters: end_date' });
-                }
+    // Vérifier si les champs obligatoires sont présents dans la requête
+    if (!start_date || start_date.trim() === "") {
+      return res.status(400).json({ error: 'Missing required parameters: start_date' });
+    }
+
+    // Vérifier si les champs obligatoires sont présents dans la requête
+    if (!end_date || end_date.trim() === "") {
+      return res.status(400).json({ error: 'Missing required parameters: end_date' });
+    }
+
+
+
     // Vérifier si Experiences est fourni 
     if (skills !== undefined) {
       // Si skills n'est pas un tableau, le transformer en tableau
@@ -43,7 +46,7 @@ exports.createExperience = async (req, res) => {
       const invalidIds = [];
       const notFoundIds = [];
 
-      let hasValidSkill = false; // Flag pour indiquer si au moins une catégorie de compétences valide est trouvée
+      let hasValidSkill = false; // Flag pour indiquer si au moins une skill valide est trouvée
       for (const skillId of categories) {
         const trimmedId = skillId.trim();
         if (trimmedId === '') {
@@ -63,7 +66,7 @@ exports.createExperience = async (req, res) => {
             // Si la catégorie n'est pas trouvée, ajouter à la liste des IDs invalides
             notFoundIds.push(trimmedId);
           } else {
-            hasValidSkill = true; // Mettre le flag à true si une catégorie de compétences valide est trouvée
+            hasValidSkill = true; // Mettre le flag à true si une skill valide est trouvée
           }
         }
       }
@@ -80,27 +83,26 @@ exports.createExperience = async (req, res) => {
         return res.status(400).json({ error: `Duplicate skills IDs: ${duplicateIds.join(', ')}` });
       }
       if (!hasValidSkill) {
-        // Si aucune catégorie de compétences valide n'est trouvée, définir skills à undefined
+        // Si aucune skill valide n'est trouvée, définir skills à undefined
         skills = undefined;
       }
     }
 
-
     // Créer une nouvelle instance de Experience avec les données
     const newExperience = new Experience({
       company: company.trim(),
-      job_title: company.trim(),
+      job_title: job_title !== undefined ? (job_title.trim() !== "" ? job_title.trim() : undefined) : job_title,
       details: details !== undefined ? (details.trim() !== "" ? details.trim() : undefined) : details,
       skills: skills !== undefined ? (Array.isArray(skills) ? skills.filter(id => id.trim() !== '')/* trim() ne mache pas */ : [skills.trim()]) : null,
-      end_date: end_date,
-      start_date: start_date
+      start_date: start_date.trim(),
+      end_date: end_date.trim()
     });
 
     // Enregistrer la nouvelle Experience dans la base de données
-    const skill = await newExperience.save();
+    const experience = await newExperience.save();
 
     // Répondre avec la nouvelle Experience créée
-    res.status(201).json(skill);
+    res.status(201).json(experience);
   } catch (err) {
     // Gérer les erreurs
     console.error(err);
@@ -109,12 +111,16 @@ exports.createExperience = async (req, res) => {
   }
 };
 
-// GET /experiences
+//! GET /experiences
 // Récupère toutes les experiences
 exports.getAllExperiences = async (req, res) => {
   try {
     // Trouver toutes les experiences dans la base de données
     const experiences = await Experience.find();
+
+    if (!experiences) {
+      return res.status(404).json({ error: 'Aucune éducation pour le moment' });
+    }
 
     // Répondre avec les experiences trouvées
     res.status(200).json(experiences);
@@ -125,11 +131,12 @@ exports.getAllExperiences = async (req, res) => {
     res.status(500).json({ error: 'An unexpected error occurred on the server.' });
   }
 };
+
+
 // GET /experience/:id
 // Récupère une experience par son ID
 exports.getExperienceById = async (req, res) => {
   try {
-
     // Recherche si l'id est vide
     if (req.params.id == undefined || req.params.id.trim() == "") {
       return res.status(400).json({ error: 'Empty' });
@@ -158,8 +165,8 @@ exports.getExperienceById = async (req, res) => {
   }
 };
 
-// DELETE /experience/:id
-// Supprime une experience par son ID
+//! DELETE /experience/:id
+//! Supprime une experience par son ID
 exports.deleteExperience = async (req, res) => {
   try {
     // Recherche si l'id est vide
@@ -170,19 +177,20 @@ exports.deleteExperience = async (req, res) => {
     const skillIdRegex = /^[0-9a-fA-F]{24}$/;
     if (!skillIdRegex.test(req.params.id.trim())) {
       return res.status(400).json({ error: 'Not an ID' });
-
     }
-
+    // Rechercher la experience à supprimer dans la base de données par son ID et la supprimer
+    const experience = await Experience.findById(req.params.id);
     // Vérifier si la experience existe
     if (!experience) {
       // Si la experience n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'Experience not found' });
     }
-    // Rechercher la experience à supprimer dans la base de données par son ID et la supprimer
-    const experience = await Experience.findByIdAndDelete(req.params.id);
+
+
+    await Experience.findByIdAndDelete(req.params.id);
 
     // Si la experience est trouvée et supprimée avec succès, renvoyer une réponse avec le code 200
-    res.status(200).send('Experience deleted');
+    res.status(200).send(`${experience.company} deleted`);
   } catch (error) {
     // Gérer les erreurs
     console.error(error);
@@ -191,9 +199,8 @@ exports.deleteExperience = async (req, res) => {
   }
 };
 
-//Perfectionner
-// PATCH /experience/:id
-// Modifie un projet par son ID
+//! PATCH /experience/:id
+//! Modifie un projet par son ID
 exports.updateExperience = async (req, res) => {
   try {
 
@@ -205,7 +212,6 @@ exports.updateExperience = async (req, res) => {
     const skillIdRegex = /^[0-9a-fA-F]{24}$/;
     if (!skillIdRegex.test(req.params.id.trim())) {
       return res.status(400).json({ error: 'Not an ID' });
-
     }
 
     // Rechercher le projet à mettre à jour
@@ -220,31 +226,40 @@ exports.updateExperience = async (req, res) => {
     // Vérifier si le champ 'company' est fourni et est de type chaîne de caractères non vide
     if (req.body.company !== undefined && req.body.company.trim() !== '') {
       updatedFields.company = req.body.company.trim();
+    } else {
+      return res.status(400).json({ error: 'Company ne peux pas être vide' });
     }
-
 
     // Vérifier si le champ 'company' est fourni et est de type chaîne de caractères non vide
-    if (req.body.job_title !== undefined && req.body.company.trim() !== '') {
+    if (req.body.job_title !== undefined && req.body.job_title.trim() !== '') {
       updatedFields.job_title = req.body.job_title.trim();
+    } else {
+      return res.status(400).json({ error: 'job_title ne peux pas être vide' });
     }
 
-    // Vérifier si le champ 'details' est fourni et est de type chaîne de caractères non vide
-    if (req.body.details !== undefined && req.body.details.trim() !== '') {
-      if (req.body.details.trim() == "delete") {
-        // Utiliser l'opérateur $unset de Mongoose pour supprimer le champ shortDescription
-        updatedFields.$unset = { details: "" };
-      } else {
-        updatedFields.details = req.body.details.trim();
-      }
+    // Vérifier si le champ 'end_date' est fourni et est de type chaîne de caractères non vide
+    if (req.body.end_date !== undefined && req.body.end_date.trim() !== '') {
+      updatedFields.end_date = req.body.end_date.trim();
+    }else {
+      return res.status(400).json({ error: 'end date doit être spécifier' });
+    }
+    // Vérifier si le champ 'start_date' est fourni et est de type chaîne de caractères non vide
+    if (req.body.start_date !== undefined && req.body.start_date.trim() !== '') {
+      updatedFields.start_date = req.body.start_date.trim();
+    }else {
+      return res.status(400).json({ error: 'start date doit être spécifier' });
     }
 
+    updatedFields.job_title = req.body.job_title.trim();   
+    updatedFields.details = req.body.details.trim();
+  
 
     let skills = req.body.skills;
-    // Vérifier si le champ 'skills' est fourni
-    if (skills === "null") {
-      updatedFields.skills = null;
-    } else {
 
+    if (skills.length === 0) {
+      skills = undefined;
+    }
+    
       // Vérifier si skillCategory est fourni
       if (skills !== undefined) {
         // Si skillCategory n'est pas un tableau, le transformer en tableau
@@ -260,7 +275,7 @@ exports.updateExperience = async (req, res) => {
 
         // Vérifier que chaque ID de skillCategory existe
         const invalidIds = [];
-        let hasValidCategory = false; // Flag pour indiquer si au moins une catégorie de compétences valide est trouvée
+        let hasValidCategory = false; // Flag pour indiquer si au moins une skill valide est trouvée
         for (const categoryId of categories) {
           const trimmedId = categoryId.trim();
           if (trimmedId === '') {
@@ -280,7 +295,7 @@ exports.updateExperience = async (req, res) => {
               // Si la catégorie n'est pas trouvée, ajouter à la liste des IDs non trouvés
               notFoundIds.push(trimmedId);
             } else {
-              hasValidCategory = true; // Mettre le flag à true si une catégorie de compétences valide est trouvée
+              hasValidCategory = true; // Mettre le flag à true si une skill valide est trouvée
             }
           }
         }
@@ -297,18 +312,17 @@ exports.updateExperience = async (req, res) => {
           return res.status(400).json({ error: `Skill IDs not found: ${notFoundIds.join(', ')}` });
         }
         if (!hasValidCategory) {
-          // Si aucune catégorie de compétences valide n'est trouvée, définir skillCategory à undefined
-          skills = undefined;
+          // Si aucune skill valide n'est trouvée, définir skillCategory à undefined
+          updatedFields.skills = undefined;
         } else {
           // Filtrer les identifiants vides et mettre à jour les catégories
           updatedFields.skills = categories.filter(id => id.trim() !== '');
 
         }
       } else {
-        skills = undefined;
+        updatedFields.skills = null;
       }
-    }
-
+    
     // Mettre à jour le projet avec les champs mis à jour
     const updatedExperience = await Experience.findByIdAndUpdate(
       req.params.id,

@@ -18,10 +18,12 @@ const skillSchema = new mongoose.Schema({
         type: [String]
     },
     created_at: {
-        type: String
+        type: String,
+        require: true
     },
     updated_at: {
-        type: String
+        type: String,
+        require: true
     }
 });
 

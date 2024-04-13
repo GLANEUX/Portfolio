@@ -14,13 +14,16 @@ const certificationSchema = new mongoose.Schema({
         trim: true
     },
     created_at: {
-        type: String
+        type: String,
+        require: true
     },
     updated_at: {
-        type: String
+        type: String,
+        require: true
     }
 });
 
+// Ajout d'une date et de skill
 
 // Ajouter un middleware "pre" pour mettre à jour la date et l'heure de création avant chaque enregistrement
 certificationSchema.pre('save', updateCreatedAt);

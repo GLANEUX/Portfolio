@@ -1,14 +1,22 @@
 <template>
   <div>
-    <h1>Liste des cexperience</h1>
+    <h1>Liste des éducations</h1>
+
+    <div v-if="experiences.length === 0">
+      <p>Aucune éducation pour le moment.</p>
+      <!-- Lien vers la création d'une nouvelle éducation -->
+      <router-link to="/add-experience">Créer une nouvelle éducation</router-link>
+    </div>
+
+    <div v-else>
     <table>
       <thead>
         <tr>
           <th>ID</th>
           <th>Company</th>
-          <th>Details</th>
+          <th>Détails</th>
           <th>job_title</th>
-          <th>Skills</th>
+          <th>Compétences</th>
           <th>Date de début</th>
           <th>Date de fin</th>
           <th>Date de création</th>
@@ -23,12 +31,12 @@
           <td>{{ experience.details }}</td>
           <td>{{ experience.job_title }}</td>
           <td>
-            <template v-if="experience.skills">
+            <div v-if="experience.skills">
               <span v-for="(skillName, index) in experience.skillNames" :key="index">
                 <span v-if="index !== 0">, </span>
                 <span>{{ skillName }}</span>
               </span>
-            </template>
+            </div>
           </td>
           <!-- Affichage de la date de début dans le format "jour mois année" -->
           <td>{{ formatDate(experience.start_date) }}</td>
@@ -55,6 +63,7 @@
     <div v-if="deleteSuccessMessage" class="delete-success">
       {{ deleteSuccessMessage }} supprimé avec succès.
     </div>
+  </div>
   </div>
 </template>
 
@@ -123,15 +132,10 @@ export default {
         console.error("Erreur lors de la suppression de la experience :", error);
       }
     },
-
     redirectToEdit(experienceId) {
       this.$router.push(`/edit-experience/${experienceId}`);
     },
     formatDate(dateString) {
-      // Vérifier si la chaîne de date est vide
-      if (!dateString) {
-        return ""; // Retourner une chaîne vide si la date est vide
-      }
 
       if (dateString == "aujourd'hui") {
         return dateString;
@@ -146,9 +150,11 @@ export default {
         return date.toLocaleDateString('fr-FR', options);
       }
     }
+
   }
 };
 </script>
+
 <style>
 /* Styles CSS facultatifs pour le tableau */
 table {
