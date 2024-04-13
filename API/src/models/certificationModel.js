@@ -6,12 +6,17 @@ const { updateCreatedAt, updateUpdatedAt } = require('../middleware/timestamps.j
 const certificationSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
-        trim: true // Supprimer les espaces avant et après
+        required: true
     },
     details: {
+        type: String
+    },
+    date: {
         type: String,
-        trim: true
+        require: true
+    },
+    skills: {
+        type: [String]
     },
     created_at: {
         type: String,
@@ -23,7 +28,6 @@ const certificationSchema = new mongoose.Schema({
     }
 });
 
-// Ajout d'une date et de skill
 
 // Ajouter un middleware "pre" pour mettre à jour la date et l'heure de création avant chaque enregistrement
 certificationSchema.pre('save', updateCreatedAt);

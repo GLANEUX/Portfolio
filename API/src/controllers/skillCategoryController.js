@@ -131,6 +131,7 @@ exports.getSkillCategoryById = async (req, res) => {
   }
 };
 
+//! ne pas oublier de supprimer les dans ceux qui l'on
 // DELETE /skillCategory/:id
 // Supprime une skillCategory par son ID
 exports.deleteSkillCategory = async (req, res) => {

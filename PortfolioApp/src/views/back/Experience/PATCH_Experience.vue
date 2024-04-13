@@ -49,6 +49,7 @@ export default {
     company: "", // Champ pour stocker le nom de la catégorie de compétences
     originalDetails: "", // Champ pour stocker le nom d'origine de la catégorie de compétences
     details: "", // Champ pour stocker le nom de la catégorie de compétences
+    originalJob_title: "",
     job_title: "",
     originalSelectedSkills: [], // Skills de compétences sélectionnées d'origine
     selectedSkills: [], // Skills de compétences sélectionnées

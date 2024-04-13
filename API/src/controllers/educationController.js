@@ -14,8 +14,6 @@ exports.createEducation = async (req, res) => {
       return res.status(400).json({ error: 'Missing required parameters: school' });
     }
 
-
-
     // Vérifier si les champs obligatoires sont présents dans la requête
     if (!start_date || start_date.trim() === "") {
       return res.status(400).json({ error: 'Missing required parameters: start_date' });
