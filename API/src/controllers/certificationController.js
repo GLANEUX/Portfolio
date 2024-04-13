@@ -134,14 +134,14 @@ exports.getCertificationById = async (req, res) => {
       return res.status(400).json({ error: 'Not an ID' });
 
     }
-
+    // Rechercher la certification dans la base de données par son ID
+    const certification = await Certification.findById(req.params.id);
     // Vérifier si la certification existe
     if (!certification) {
       // Si la certification n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'Certification not found' });
     }
-    // Rechercher la certification dans la base de données par son ID
-    const certification = await Certification.findById(req.params.id);
+
 
     // Si la certification est trouvée, renvoyer une réponse avec la certification
     res.status(200).json(certification);
@@ -223,7 +223,7 @@ exports.updateCertification = async (req, res) => {
       return res.status(400).json({ error: 'date ne peux pas être vide' });
     }
 
-    updatedFields.details = req.body.details.trim();
+    updatedFields.details = req.body.details ? req.body.details.trim() : req.body.details
 
 
     let skills = req.body.skills;

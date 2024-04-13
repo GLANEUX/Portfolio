@@ -238,8 +238,8 @@ exports.updateEducation = async (req, res) => {
       return res.status(400).json({ error: 'start date doit être spécifier' });
     }
 
-    updatedFields.program = req.body.program.trim();   
-    updatedFields.details = req.body.details.trim();
+    updatedFields.program = req.body.program ? req.body.program.trim() : req.body.program
+    updatedFields.details = req.body.details ? req.body.details.trim() : req.body.details
   
 
     let skills = req.body.skills;

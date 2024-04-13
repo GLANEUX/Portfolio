@@ -250,8 +250,8 @@ exports.updateExperience = async (req, res) => {
       return res.status(400).json({ error: 'start date doit être spécifier' });
     }
 
-    updatedFields.job_title = req.body.job_title.trim();   
-    updatedFields.details = req.body.details.trim();
+    updatedFields.job_title = req.body.job_title ? req.body.job_title.trim() : req.body.job_title
+    updatedFields.details = req.body.details ? req.body.details.trim() : req.body.details
   
 
     let skills = req.body.skills;
