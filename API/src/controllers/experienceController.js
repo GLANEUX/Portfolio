@@ -6,8 +6,10 @@ const Skills = require('../models/skillModel');
 exports.createExperience = async (req, res) => {
   try {
     // Extraire les données de la requête POST en supprimant les espaces avant et après (trim)
-    let { company, job_title, details, skills } = req.body;
+    let { company, job_title, details, skills,start_date, end_date } = req.body;
 
+
+    
     // Vérifier si les champs obligatoires sont présents dans la requête
     if (!company || company.trim() === "") {
       return res.status(400).json({ error: 'Missing required parameters: company' });
@@ -15,6 +17,17 @@ exports.createExperience = async (req, res) => {
     if (!job_title || job_title.trim() === "") {
       return res.status(400).json({ error: 'Missing required parameters: job_title' });
     }
+
+
+            // Vérifier si les champs obligatoires sont présents dans la requête
+            if (!start_date || start_date.trim() === "") {
+              return res.status(400).json({ error: 'Missing required parameters: start_date' });
+            }
+    
+                // Vérifier si les champs obligatoires sont présents dans la requête
+                if (!end_date || end_date.trim() === "") {
+                  return res.status(400).json({ error: 'Missing required parameters: end_date' });
+                }
     // Vérifier si Experiences est fourni 
     if (skills !== undefined) {
       // Si skills n'est pas un tableau, le transformer en tableau
@@ -78,7 +91,9 @@ exports.createExperience = async (req, res) => {
       company: company.trim(),
       job_title: company.trim(),
       details: details !== undefined ? (details.trim() !== "" ? details.trim() : undefined) : details,
-      skills: skills !== undefined ? (Array.isArray(skills) ? skills.filter(id => id.trim() !== '')/* trim() ne mache pas */ : [skills.trim()]) : null
+      skills: skills !== undefined ? (Array.isArray(skills) ? skills.filter(id => id.trim() !== '')/* trim() ne mache pas */ : [skills.trim()]) : null,
+      end_date: end_date,
+      start_date: start_date
     });
 
     // Enregistrer la nouvelle Experience dans la base de données

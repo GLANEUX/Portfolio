@@ -5,7 +5,7 @@
         <!-- Dropdown pour les compétences -->
         <li>
           <div class="dropdown">
-            <button class="dropbtn">Compétences</button>
+            <button class="dropbtn"> <router-link to="/get-skills">Compétences</router-link></button>
             <div class="dropdown-content">
               <router-link to="/add-skill">Ajouter une compétence</router-link>
               <router-link to="/get-skills">Liste des compétences</router-link>
@@ -15,7 +15,8 @@
         <!-- Dropdown pour les catégories de compétences -->
         <li>
           <div class="dropdown">
-            <button class="dropbtn">Catégories de compétences</button>
+            <button class="dropbtn"> <router-link to="/get-skill-categorys">Catégories de
+                compétences</router-link></button>
             <div class="dropdown-content">
               <router-link to="/add-skill-category">Ajouter une catégorie de compétences</router-link>
               <router-link to="/get-skill-categorys">Liste des catégories de compétences</router-link>
@@ -25,33 +26,47 @@
         <!-- Dropdown pour les catégories de Certification -->
         <li>
           <div class="dropdown">
-            <button class="dropbtn">Catégories de Certification</button>
+            <button class="dropbtn"><router-link to="/get-certifications">Certification</router-link></button>
             <div class="dropdown-content">
-              <router-link to="/add-certification">Ajouter une catégorie de Certification</router-link>
-              <router-link to="/get-certifications">Liste des catégories de Certification</router-link>
+              <router-link to="/add-certification">Ajouter une Certification</router-link>
+              <router-link to="/get-certifications">Liste des Certification</router-link>
             </div>
           </div>
         </li>
         <!-- Dropdown pour les catégories de education -->
         <li>
           <div class="dropdown">
-            <button class="dropbtn">Catégories de education</button>
+            <button class="dropbtn"><router-link to="/get-educations">education</router-link></button>
             <div class="dropdown-content">
-              <router-link to="/add-education">Ajouter une catégorie de education</router-link>
-              <router-link to="/get-educations">Liste des catégories de education</router-link>
+              <router-link to="/add-education">Ajouter une education</router-link>
+              <router-link to="/get-educations">Liste des education</router-link>
             </div>
           </div>
         </li>
         <!-- Dropdown pour les catégories de education -->
         <li>
           <div class="dropdown">
-            <button class="dropbtn">Catégories de experiences</button>
+            <button class="dropbtn"><router-link to="/get-experiences">experiences</router-link></button>
             <div class="dropdown-content">
-              <router-link to="/add-experience">Ajouter une catégorie de experiences</router-link>
-              <router-link to="/get-experiences">Liste des catégories de experiences</router-link>
+              <router-link to="/add-experience">Ajouter une experiences</router-link>
+              <router-link to="/get-experiences">Liste des  experiences</router-link>
             </div>
           </div>
         </li>
+
+        <!-- Dropdown pour les catégories de education -->
+        <li>
+          <div class="dropdown">
+            <button class="dropbtn"><router-link to="/get-projects">projects</router-link></button>
+            <div class="dropdown-content">
+              <router-link to="/add-project">Ajouter une projects</router-link>
+              <router-link to="/get-projects">Liste des projects</router-link>
+            </div>
+          </div>
+        </li>
+
+
+
       </ul>
 
     </nav>

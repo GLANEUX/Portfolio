@@ -1,14 +1,24 @@
 <template>
   <div>
-    <h1>Liste des ceducation</h1>
+    <h1>Liste des éducations</h1>
+
+    <div v-if="educations.length === 0">
+      <p>Aucune éducation pour le moment.</p>
+      <!-- Lien vers la création d'une nouvelle éducation -->
+      <router-link to="/add-education">Créer une nouvelle éducation</router-link>
+    </div>
+
+    <div v-else>
     <table>
       <thead>
         <tr>
           <th>ID</th>
-          <th>School</th>
-          <th>Details</th>
-          <th>program</th>
-          <th>Skills</th>
+          <th>École</th>
+          <th>Détails</th>
+          <th>Programme</th>
+          <th>Compétences</th>
+          <th>Date de début</th>
+          <th>Date de fin</th>
           <th>Date de création</th>
           <th>Date de mise à jour</th>
           <th>Action</th>
@@ -21,13 +31,17 @@
           <td>{{ education.details }}</td>
           <td>{{ education.program }}</td>
           <td>
-              <template v-if="education.skills">
-                <span v-for="(skillName, index) in education.skillNames" :key="index">
-                  <span v-if="index !== 0">, </span>
-                  <span>{{ skillName }}</span>
-                </span>
-              </template>
-            </td>
+            <div v-if="education.skills">
+              <span v-for="(skillName, index) in education.skillNames" :key="index">
+                <span v-if="index !== 0">, </span>
+                <span>{{ skillName }}</span>
+              </span>
+            </div>
+          </td>
+          <!-- Affichage de la date de début dans le format "jour mois année" -->
+          <td>{{ formatDate(education.start_date) }}</td>
+          <!-- Affichage de la date de fin dans le format "jour mois année" -->
+          <td>{{ formatDate(education.end_date) }}</td>
           <td>{{ education.created_at }}</td>
           <td>{{ education.updated_at }}</td>
           <td>
@@ -49,6 +63,7 @@
     <div v-if="deleteSuccessMessage" class="delete-success">
       {{ deleteSuccessMessage }} supprimé avec succès.
     </div>
+  </div>
   </div>
 </template>
 
@@ -72,7 +87,7 @@ export default {
       try {
         const response = await axios.get(`${config.apiUrl}/educations`);
         this.educations = response.data;
-      await this.getSkillNames();
+        await this.getSkillNames();
       } catch (error) {
         console.error("Erreur lors de la récupération des compétences :", error);
       }
@@ -105,25 +120,41 @@ export default {
       this.deleteConfirmation = null;
     },
     async deleteConfirmed() {
-  try {
-    await axios.delete(`${config.apiUrl}/education/${this.deleteConfirmation._id}`);
-    this.deleteSuccessMessage = this.deleteConfirmation.school;
-    await this.getEducations(); // Actualiser la liste des catégories après la suppression
-    setTimeout(() => {
-      this.deleteSuccessMessage = ""; // Effacer le message de succès après quelques secondes
-    }, 3000);
-    this.deleteConfirmation = null; // Réinitialiser la confirmation de suppression
-  } catch (error) {
-    console.error("Erreur lors de la suppression de la education :", error);
-  }
-},
-
+      try {
+        await axios.delete(`${config.apiUrl}/education/${this.deleteConfirmation._id}`);
+        this.deleteSuccessMessage = this.deleteConfirmation.school;
+        await this.getEducations(); // Actualiser la liste des catégories après la suppression
+        setTimeout(() => {
+          this.deleteSuccessMessage = ""; // Effacer le message de succès après quelques secondes
+        }, 3000);
+        this.deleteConfirmation = null; // Réinitialiser la confirmation de suppression
+      } catch (error) {
+        console.error("Erreur lors de la suppression de la education :", error);
+      }
+    },
     redirectToEdit(educationId) {
       this.$router.push(`/edit-education/${educationId}`);
+    },
+    formatDate(dateString) {
+
+      if (dateString == "aujourd'hui") {
+        return dateString;
+      }
+
+      if (dateString != "aujourd'hui") {
+        // Création d'une instance de Date à partir de la chaîne de date
+        const date = new Date(dateString);
+        // Options de formatage pour la date
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        // Utilisation de la méthode toLocaleDateString pour formater la date
+        return date.toLocaleDateString('fr-FR', options);
+      }
     }
+
   }
 };
 </script>
+
 <style>
 /* Styles CSS facultatifs pour le tableau */
 table {

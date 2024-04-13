@@ -1,18 +1,12 @@
 <template>
   <div>
     <form @submit.prevent="submitForm">
-      <label for="company">Company :</label>
-      <input type="text" id="company" v-model="company" required>
-      <label for="job_title">job_title :</label>
-      <input type="text" id="job_title" v-model="job_title" required>
+      <label for="name">Name :</label>
+      <input type="text" id="name" v-model="name" required>
+      <label for="shortDescription">shortDescription :</label>
+      <input type="text" id="shortDescription" v-model="shortDescription" required>
       <label for="details">details :</label>
       <input type="text" id="details" v-model="details" required>
-      <label for="start_date">start_date</label>
-      <input type="date" id="start_date" v-model="start_date" required>
-      <label for="end_date">end_date</label>
-      <input type="date" id="end_date" v-model="end_date" :disabled="useCurrentDate" required>
-      <button type="button" @click="setCurrentDate" :class="{ selected: useCurrentDate }">aujourd'hui</button>
-
       <br>
       <label>Catégories de compétences :</label>
       <div>
@@ -32,8 +26,8 @@
 
     <!-- Boutons après succès -->
     <div v-if="success">
-      <button @click="redirectToExperienceList">Voir la liste des skills</button>
-      <button @click="addNewExperience">Ajouter une nouvelle skill</button>
+      <button @click="redirectToProjectList">Voir la liste des skills</button>
+      <button @click="addNewProject">Ajouter une nouvelle skill</button>
     </div>
   </div>
 </template>
@@ -45,17 +39,13 @@ import config from "@/config.js"; // Importez le fichier de configuration
 export default {
   data() {
     return {
-      company: "", // Champ pour stocker le nom de la skill de compétences
+      name: "", // Champ pour stocker le nom de la skill de compétences
       details: "", // Champ pour stocker le nom de la skill de compétences
-      job_title: "",
+      shortDescription: "",
       selectedSkills: [], // Skills de compétences sélectionnées
       skills: [], // Liste des skills de compétences
       error: null, // Propriété pour stocker les erreurs
-      success: null, // Propriété pour stocker les succès
-      useCurrentDate: false,
-      start_date: "",
-      end_date: ""
-      
+      success: null // Propriété pour stocker les succès
     };
   },
   async created() {
@@ -91,73 +81,49 @@ export default {
     },
     async submitForm() {
       try {
-
-        if (this.useCurrentDate) {
-          this.end_date = "aujourd'hui";
-        }
-        // Envoi de la requête POST pour ajouter une nouvelle experience
-        const response = await axios.post(`${config.apiUrl}/experience`, {
-          company: this.company,
+        // Envoi de la requête POST pour ajouter une nouvelle project
+        const response = await axios.post(`${config.apiUrl}/project`, {
+          name: this.name,
           details: this.details,
-          job_title: this.job_title,
-          skills: this.selectedSkills,
-          end_date: this.end_date,
-          start_date: this.start_date
+          shortDescription: this.shortDescription,
+          skills: this.selectedSkills
         });
 
         // Affichage du succès
-        this.success = "Nouvelle experience ajoutée : " + response.data.company;
+        this.success = "Nouvelle project ajoutée : " + response.data.name;
 
         // Réinitialisation du champ "name" après l'ajout
-        this.company = "";
+        this.name = "";
         this.details = "";
-        this.job_title = "";
+        this.shortDescription = "";
         this.selectedSkills = [];
-        this.useCurrentDate = false;
-        this.start_date = "";
-        this.end_date = "";
         // Effacer les messages d'erreur précédents
         this.error = null;
         //  Redirection automatique vers la liste des compétences après 3 secondes
         setTimeout(() => {
-          this.redirectToExperienceList();
+          this.redirectToProjectList();
         }, 3000);
       } catch (error) {
         // Gestion des erreurs
-        this.error = "Erreur lors de l'ajout de la experience : " + error.response.data.error;
+        this.error = "Erreur lors de l'ajout de la project : " + error.response.data.error;
 
         // Effacer les messages de succès précédents
         this.success = null;
       }
     },
-    redirectToExperienceList() {
+    redirectToProjectList() {
       // Redirection vers la liste des skills de compétences
-      this.$router.push('/get-experiences');
+      this.$router.push('/get-projects');
     },
-    addNewExperience() {
+    addNewProject() {
       // Réinitialiser le formulaire pour ajouter une nouvelle skill
       this.success = null; // Effacer le message de succès
       this.error = null; // Effacer les erreurs
-      this.company = ""; // Réinitialiser le champ de nom
-      this.job_title = "";
+      this.name = ""; // Réinitialiser le champ de nom
+      this.shortDescription = "";
       this.details = ""; // Réinitialiser le champ de nom
       this.selectedSkills = [];
-      this.useCurrentDate = false;
-      this.start_date = "";
-      this.end_date = "";
-    },
-    setCurrentDate() {
-      // Basculer l'état de sélection du bouton "aujourd'hui"
-      this.useCurrentDate = !this.useCurrentDate;
-      // Si le bouton "aujourd'hui" est sélectionné, mettre à jour la date avec le mot "aujourd'hui"
-      if (!this.useCurrentDate) {
-        this.end_date = ""; // ou null si vous préférez
-
-      } else {
-        // Réinitialiser la valeur de la date si le bouton "aujourd'hui" est désélectionné
-        this.end_date = ""; // ou null si vous préférez
-      }
-    },
+    }
   }
 };
 </script>

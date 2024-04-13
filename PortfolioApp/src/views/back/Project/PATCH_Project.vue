@@ -1,16 +1,16 @@
 <template>
   <div>
-    <h1>Modifier la experience</h1>
+    <h1>Modifier la project</h1>
     <form @submit.prevent="submitForm">
-      <label for="company">Nom :</label>
-      <!-- Utilisez v-model pour lier le champ à la propriété company -->
-      <input type="text" id="company" v-model="company" required>
+      <label for="name">Nom :</label>
+      <!-- Utilisez v-model pour lier le champ à la propriété name -->
+      <input type="text" id="name" v-model="name" required>
       <label for="details">details :</label>
-      <!-- Utilisez v-model pour lier le champ à la propriété company -->
+      <!-- Utilisez v-model pour lier le champ à la propriété name -->
       <input type="text" id="details" v-model="details" required>
-      <label for="job_title">job_title :</label>
-      <!-- Utilisez v-model pour lier le champ à la propriété company -->
-      <input type="text" id="job_title" v-model="job_title" required>
+      <label for="shortDescription">shortDescription :</label>
+      <!-- Utilisez v-model pour lier le champ à la propriété name -->
+      <input type="text" id="shortDescription" v-model="shortDescription" required>
       <br>
       <label>Catégories de compétences :</label>
       <div>
@@ -21,13 +21,13 @@
       </div>
 
       <button type="submit">Enregistrer</button>
-      <button type="button" @click="redirectToExperienceList">Annuler</button>
+      <button type="button" @click="redirectToProjectList">Annuler</button>
       <button type="button" @click="resetForm">Réinitialiser</button>
     </form>
     <!-- Affichage du message et du bouton de retour à la liste -->
     <div v-if="showSuccessMessage">
       <p>{{ successMessage }}</p>
-      <button @click="redirectToExperienceList">Retour à la liste</button>
+      <button @click="redirectToProjectList">Retour à la liste</button>
     </div>
   </div>
 </template>
@@ -39,11 +39,11 @@ import config from "@/config.js";
 export default {
   data() {
     return {
-      originalCompany: "", // Champ pour stocker le nom d'origine de la catégorie de compétences
-      company: "", // Champ pour stocker le nom de la catégorie de compétences
+      originalName: "", // Champ pour stocker le nom d'origine de la catégorie de compétences
+      name: "", // Champ pour stocker le nom de la catégorie de compétences
       originalDetails: "", // Champ pour stocker le nom d'origine de la catégorie de compétences
       details: "", // Champ pour stocker le nom de la catégorie de compétences
-      job_title: "",
+      shortDescription: "",
       selectedSkills: [], // Skills de compétences sélectionnées
       skills: [], // Liste des skills de compétences      
       showSuccessMessage: false, // Boolean pour contrôler l'affichage du message de succès
@@ -54,7 +54,7 @@ export default {
     // Charger la liste des catégories de compétences lors de la création du composant
     await this.loadSkills();
     // Récupération de l'ID de la catégorie depuis l'URL
-    this.experienceId = this.$route.params.id;
+    this.projectId = this.$route.params.id;
 
 
     if (this.selectedSkills.length === 0) {
@@ -62,7 +62,7 @@ export default {
       this.selectedSkills = [];
     }
     // Charger les détails de la catégorie depuis l'API
-    this.loadExperience();
+    this.loadProject();
   },
   methods: {
     async loadSkills() {
@@ -90,41 +90,41 @@ export default {
       // Vérifier si la catégorie est déjà sélectionnée
       return this.selectedSkills.includes(skillId);
     },
-    async loadExperience() {
+    async loadProject() {
       try {
         // Effectuer une requête GET pour récupérer les détails de la catégorie
-        const response = await axios.get(`${config.apiUrl}/experience/${this.experienceId}`);
-        // Mettre à jour la valeur de company avec le nom de la catégorie récupérée
-        this.company = response.data.company;
-        this.originalCompany = response.data.company; // Stocker le nom d'origine
+        const response = await axios.get(`${config.apiUrl}/project/${this.projectId}`);
+        // Mettre à jour la valeur de name avec le nom de la catégorie récupérée
+        this.name = response.data.name;
+        this.originalName = response.data.name; // Stocker le nom d'origine
         this.details = response.data.details;
         this.originalDetails = response.data.details; // Stocker le nom d'origine     
-        this.job_title = response.data.job_title;
-        this.originalJob_title = response.data.job_title; // Stocker le nom d'origine     
+        this.shortDescription = response.data.shortDescription;
+        this.originalShortDescription = response.data.shortDescription; // Stocker le nom d'origine     
         if (response.data.skills !== null) {
           this.selectedSkills = response.data.skills;
         }
       } catch (error) {
-        console.error("Erreur lors du chargement des détails de la experience :", error);
+        console.error("Erreur lors du chargement des détails de la project :", error);
       }
     },
     async submitForm() {
       try {
         // Envoi de la requête PATCH pour modifier la catégorie de compétences
-        await axios.patch(`${config.apiUrl}/experience/${this.experienceId}`, {
-          company: this.company,
+        await axios.patch(`${config.apiUrl}/project/${this.projectId}`, {
+          name: this.name,
           details: this.details,
-          job_title: this.job_title,
+          shortDescription: this.shortDescription,
           skills: this.selectedSkills
         });
         // Afficher le message de succès et le bouton de retour à la liste
         this.showSuccessMessage = true;
-        this.successMessage = `"${this.originalCompany}" modifié`;
+        this.successMessage = `"${this.originalName}" modifié`;
         // Masquer le message de succès après 3 secondes
         setTimeout(() => {
           this.showSuccessMessage = false;
           // Redirection vers la page des catégories de compétences après 3 secondes
-          this.redirectToExperienceList();
+          this.redirectToProjectList();
         }, 3000);
       } catch (error) {
         // Gestion des erreurs
@@ -132,14 +132,14 @@ export default {
       }
     },
     resetForm() {
-      // Réinitialiser le champ company avec le nom d'origine
-      this.company = this.originalCompany;
+      // Réinitialiser le champ name avec le nom d'origine
+      this.name = this.originalName;
       this.details = this.originalDetails;
-      this.job_title = this.originalJob_title;
+      this.shortDescription = this.originalShortDescription;
     },
-    redirectToExperienceList() {
+    redirectToProjectList() {
       // Redirection vers la page des catégories de compétences
-      this.$router.push('/get-experiences');
+      this.$router.push('/get-projects');
     }
   }
 };

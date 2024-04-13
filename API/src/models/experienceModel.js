@@ -3,12 +3,12 @@ const Schema = mongoose.Schema;
 const { updateCreatedAt, updateUpdatedAt } = require('../middleware/timestamps.js');
 
 const experienceSchema = new mongoose.Schema({
-    // start_date: {
-    //     type: String
-    // },
-    // end_date: {
-    //     type: String
-    // },
+    start_date: {
+        type: String
+    },
+    end_date: {
+        type: String
+    },
     company: {
         type: String,
         require: true
