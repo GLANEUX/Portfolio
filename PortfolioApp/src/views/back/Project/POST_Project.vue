@@ -4,9 +4,9 @@
       <label for="name">Name :</label>
       <input type="text" id="name" v-model="name" required>
       <label for="shortDescription">shortDescription :</label>
-      <input type="text" id="shortDescription" v-model="shortDescription" required>
+      <input type="text" id="shortDescription" v-model="shortDescription" >
       <label for="details">details :</label>
-      <input type="text" id="details" v-model="details" required>
+      <input type="text" id="details" v-model="details" >
       <br>
       <label>Catégories de compétences :</label>
 
@@ -20,6 +20,15 @@
         <span v-else> <router-link to="/add-skill">Ajouter un skill</router-link>
         </span>
       </div>
+      <br/>
+      <label for="links">Liens :</label>
+<div v-for="(link, index) in links" :key="index">
+    <input type="text" v-model="link.name" placeholder="Nom du lien" required>
+    <input type="url" v-model="link.url" placeholder="URL du lien" required>
+    <button type="button" @click="removeLink(index)">Supprimer le lien</button>
+</div>
+<button type="button" @click="addLink">Ajouter un lien</button>
+<br/>
       <button type="submit">Ajouter</button>
     </form>
 
@@ -46,6 +55,7 @@ export default {
       shortDescription: "",
       selectedSkills: [], // Skills de compétences sélectionnées
       skills: [], // Liste des skills de compétences
+      links: [],
       error: null, // Propriété pour stocker les erreurs
       success: null // Propriété pour stocker les succès
     };
@@ -88,7 +98,8 @@ export default {
           name: this.name,
           details: this.details,
           shortDescription: this.shortDescription,
-          skills: this.selectedSkills
+          skills: this.selectedSkills,
+          links: this.links
         });
 
         // Affichage du succès
@@ -111,6 +122,12 @@ export default {
     redirectToProjectList() {
       // Redirection vers la liste des skills de compétences
       this.$router.push('/get-projects');
+    },
+    addLink() {
+        this.links.push({ name: '', url: '' });
+    },
+    removeLink(index) {
+        this.links.splice(index, 1);
     },
 
   }

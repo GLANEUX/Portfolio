@@ -17,6 +17,7 @@
           <th>Details</th>
           <th>shortDescription</th>
           <th>Skills</th>
+          <th>Links</th>
           <th>Date de création</th>
           <th>Date de mise à jour</th>
           <th>Action</th>
@@ -29,13 +30,23 @@
           <td>{{ project.details }}</td>
           <td>{{ project.shortDescription }}</td>
           <td>
-            <template v-if="project.skills">
+            <div v-if="project.skills">
               <span v-for="(skillName, index) in project.skillNames" :key="index">
                 <span v-if="index !== 0">, </span>
                 <span>{{ skillName }}</span>
               </span>
-            </template>
+            </div>
           </td>
+          
+
+    <td>
+      <!-- Afficher les liens -->
+      <div v-if="project.links ">
+        <div v-for="(link, index) in project.links" :key="index">
+          <a :href="link.url" target="_blank">{{ link.name }}</a>
+        </div>
+      </div>
+    </td>
           <td>{{ project.created_at }}</td>
           <td>{{ project.updated_at }}</td>
           <td>

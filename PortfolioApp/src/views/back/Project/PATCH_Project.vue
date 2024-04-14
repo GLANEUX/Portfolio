@@ -5,9 +5,9 @@
       <label for="name">Nom :</label>
       <input type="text" id="name" v-model="name" required>
       <label for="details">details :</label>
-      <input type="text" id="details" v-model="details" required>
+      <input type="text" id="details" v-model="details" >
       <label for="shortDescription">shortDescription :</label>
-      <input type="text" id="shortDescription" v-model="shortDescription" required>
+      <input type="text" id="shortDescription" v-model="shortDescription" >
       <br>
       <label>Catégories de compétences :</label>
 
@@ -21,6 +21,17 @@
         <span v-else> <router-link to="/add-skill">Ajouter un skill</router-link>
         </span>
       </div>
+
+      <br/>
+      <label for="links">Liens :</label>
+<div v-for="(link, index) in links" :key="index">
+    <input type="text" v-model="link.name" placeholder="Nom du lien" required>
+    <input type="url" v-model="link.url" placeholder="URL du lien" required>
+    <button type="button" @click="removeLink(index)">Supprimer le lien</button>
+</div>
+<button type="button" @click="addLink">Ajouter un lien</button>
+<br/>
+
       <button type="submit">Enregistrer</button>
       <button type="button" @click="redirectToProjectList">Annuler</button>
       <button type="button" @click="resetForm">Réinitialiser</button>
@@ -49,6 +60,8 @@ export default {
       shortDescription: "",
       originalSelectedSkills: [], // Skills de compétences sélectionnées d'origine
       selectedSkills: [], // Skills de compétences sélectionnées
+      originalLinks: [],
+      links: [],
       skills: [], // Liste des skills de compétences      
       error: null,
       success: null,
@@ -106,6 +119,10 @@ export default {
           this.selectedSkills = response.data.skills;
           this.originalSelectedSkills = response.data.skills.slice(); // Créer une copie distincte
         }
+        if (response.data.links !== null) {
+          this.links = response.data.links;
+          this.originalLinks = response.data.links.slice(); // Créer une copie distincte
+        }
       } catch (error) {
         console.error("Erreur lors du chargement des détails de la project :", error);
       }
@@ -117,7 +134,8 @@ export default {
           name: this.name,
           details: this.details,
           shortDescription: this.shortDescription,
-          skills: this.selectedSkills
+          skills: this.selectedSkills,
+          links: this.links
         });
         // Affichage du succès
         this.success = this.originalName + " modifié";
@@ -142,12 +160,19 @@ export default {
       this.details = this.originalDetails;
       this.shortDescription = this.originalShortDescription;
       this.selectedSkills = this.originalSelectedSkills.slice();
+      this.links = this.originalLinks.slice()
 
     },
     redirectToProjectList() {
       // Redirection vers la page des catégories de compétences
       this.$router.push('/get-projects');
-    }
+    },
+    addLink() {
+        this.links.push({ name: '', url: '' });
+    },
+    removeLink(index) {
+        this.links.splice(index, 1);
+    },
   }
 };
 </script>

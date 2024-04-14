@@ -6,11 +6,72 @@ const Project = require('../models/projectModel');
 exports.createProject = async (req, res) => {
   try {
     // Extraire les données de la requête POST en supprimant les espaces avant et après (trim)
-    let { name, shortDescription, details, skills } = req.body;
+    let { name, shortDescription, details, skills, links } = req.body;
+
 
     // Vérifier si les champs obligatoires sont présents dans la requête
     if (!name || name.trim() === "") {
       return res.status(400).json({ error: 'Missing required parameters: name' });
+    }
+
+
+    // Vérification de la présence et du type de `links`
+    if (links !== undefined && Array.isArray(links)) {
+      const validLinks = [];
+
+      // Parcours de chaque élément du tableau links
+      for (let i = 0; i < links.length; i++) {
+        const link = links[i];
+
+        // Vérification de la présence et de la validité du nom et de l'URL
+        if ((link.name === undefined || link.name.trim() === '') &&
+          (link.url === undefined || link.url.trim() === '')) {
+          // Si le nom et l'URL du lien sont tous les deux manquants ou invalides, ignorer cette entrée
+          continue;
+        }
+
+        if (link.name === undefined || link.name.trim() === '') {
+          // Si le nom du lien est manquant ou invalide, renvoyer une erreur
+          return res.status(400).json({ error: `(${i + 1}) Missing name for link : ${link.url.trim()}` });
+        }
+
+
+        if (link.url === undefined || link.url.trim() === '') {
+          // Si l'URL du lien est manquante ou invalide, renvoyer une erreur
+          return res.status(400).json({ error: `(${i + 1}) Missing URL for link : ${link.name.trim()}` });
+        }
+
+        // Trim et vérification si non vide pour `name` et `url`
+        const trimmedName = link.name.trim();
+        const trimmedUrl = link.url.trim();
+
+        // Vérification de la structure de l'URL
+        if (!isValidURI(trimmedUrl)) {
+          // Si l'URL n'a pas la bonne structure, renvoyer une erreur
+          return res.status(400).json({ error: `(${i + 1}) Invalid URL structure for link  : ${trimmedName}` });
+        }
+
+        // Ajouter le lien valide à la liste des liens à insérer dans la base de données
+        validLinks.push({
+          name: trimmedName,
+          url: trimmedUrl
+        });
+      }
+
+      // Si des liens valides sont trouvés, les ajouter à la liste des links à insérer dans la base de données
+      links = validLinks.length > 0 ? validLinks : null;
+    } else {
+      // Si `links` n'est pas un tableau ou n'est pas défini, renvoyer une erreur
+      links = null;
+    }
+    // Fonction pour vérifier si une URL est valide
+    function isValidURI(uri) {
+      try {
+        new URL(uri);
+        return true;
+      } catch (error) {
+        return false;
+      }
     }
 
 
@@ -77,6 +138,7 @@ exports.createProject = async (req, res) => {
       shortDescription: shortDescription !== undefined ? (shortDescription.trim() !== "" ? shortDescription.trim() : undefined) : shortDescription,
       details: details !== undefined ? (details.trim() !== "" ? details.trim() : undefined) : details,
       skills: skills !== undefined ? (Array.isArray(skills) ? skills.filter(id => id.trim() !== '')/* trim() ne mache pas */ : [skills.trim()]) : null,
+      links: links
     });
 
     // Enregistrer la nouvelle Project dans la base de données
@@ -218,6 +280,75 @@ exports.updateProject = async (req, res) => {
     updatedFields.shortDescription = req.body.shortDescription ? req.body.shortDescription.trim() : req.body.shortDescription
     updatedFields.details = req.body.details ? req.body.details.trim() : req.body.details
   
+
+let links = req.body.links
+
+if (links.length === 0 || links == null ){
+  links = undefined
+} 
+
+
+// Vérification de la présence et du type de `links`
+    if (links !== undefined && Array.isArray(links)) {
+
+      const validLinks = [];
+
+      // Parcours de chaque élément du tableau links
+      for (let i = 0; i < links.length; i++) {
+
+        const link = links[i];
+        // Vérification de la présence et de la validité du nom et de l'URL
+        if ((link.name === undefined || link.name.trim() === '') &&
+          (link.url === undefined || link.url.trim() === '')) {
+          // Si le nom et l'URL du lien sont tous les deux manquants ou invalides, ignorer cette entrée
+          continue;
+        }
+
+        if (link.name === undefined || link.name.trim() === '') {
+          // Si le nom du lien est manquant ou invalide, renvoyer une erreur
+          return res.status(400).json({ error: `(${i + 1}) Missing name for link : ${link.url.trim()}` });
+        }
+
+
+        if (link.url === undefined || link.url.trim() === '') {
+          // Si l'URL du lien est manquante ou invalide, renvoyer une erreur
+          return res.status(400).json({ error: `(${i + 1}) Missing URL for link : ${link.name.trim()}` });
+        }
+
+        // Trim et vérification si non vide pour `name` et `url`
+        const trimmedName = link.name.trim();
+        const trimmedUrl = link.url.trim();
+
+        // Vérification de la structure de l'URL
+        if (!isValidURI(trimmedUrl)) {
+          // Si l'URL n'a pas la bonne structure, renvoyer une erreur
+          return res.status(400).json({ error: `(${i + 1}) Invalid URL structure for link  : ${trimmedName}` });
+        }
+
+        // Ajouter le lien valide à la liste des liens à insérer dans la base de données
+        validLinks.push({
+          name: trimmedName,
+          url: trimmedUrl
+        });
+      }
+
+      // Si des liens valides sont trouvés, les ajouter à la liste des links à insérer dans la base de données
+      updatedFields.links = validLinks.length > 0 ? validLinks : null;
+    } else {
+      // Si `links` n'est pas un tableau ou n'est pas défini, renvoyer une erreur
+      updatedFields.links = null;
+    }
+    // Fonction pour vérifier si une URL est valide
+    function isValidURI(uri) {
+      try {
+        new URL(uri);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+
 
     let skills = req.body.skills;
 

@@ -14,19 +14,19 @@ const projectSchema = new mongoose.Schema({
     details: {
         type: String
     },
-    // links: [
-    //     {
-    //         name: {
-    //             type: String,
-    //             required: true
-    //         },
-    //         url: {
-    //             type: String,
-    //             format: 'uri',
-    //             required: true
-    //         }
-    //     }
-    // ],
+    links: [
+        {
+            name: {
+                type: String,
+                required: true
+            },
+            url: {
+                type: String,
+                format: 'uri',
+                required: true
+            }
+        }
+    ],
     // images: {
     //     type: [String]
     // },
