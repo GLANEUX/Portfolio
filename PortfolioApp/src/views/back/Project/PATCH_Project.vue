@@ -5,9 +5,9 @@
       <label for="name">Nom :</label>
       <input type="text" id="name" v-model="name" required>
       <label for="details">details :</label>
-      <input type="text" id="details" v-model="details" >
+      <input type="text" id="details" v-model="details">
       <label for="shortDescription">shortDescription :</label>
-      <input type="text" id="shortDescription" v-model="shortDescription" >
+      <input type="text" id="shortDescription" v-model="shortDescription">
       <br>
       <label>Catégories de compétences :</label>
 
@@ -22,15 +22,48 @@
         </span>
       </div>
 
-      <br/>
+      <br />
       <label for="links">Liens :</label>
-<div v-for="(link, index) in links" :key="index">
-    <input type="text" v-model="link.name" placeholder="Nom du lien" required>
-    <input type="url" v-model="link.url" placeholder="URL du lien" required>
-    <button type="button" @click="removeLink(index)">Supprimer le lien</button>
-</div>
-<button type="button" @click="addLink">Ajouter un lien</button>
-<br/>
+      <div v-for="(link, index) in links" :key="index">
+        <input type="text" v-model="link.name" placeholder="Nom du lien" required>
+        <input type="url" v-model="link.url" placeholder="URL du lien" required>
+        <button type="button" @click="removeLink(index)">Supprimer le lien</button>
+      </div>
+      <button type="button" @click="addLink">Ajouter un lien</button>
+      <br />
+
+      <br />
+      <label for="images">Images :</label>
+      <div v-for="(image, index) in images" :key="index">
+
+        <span v-if="image.url"> 
+
+
+        <input type="text" v-model="image.title" placeholder="Titre" required>
+        <input type="text" v-model="image.alt" placeholder="alt" required>
+        <input type="text" v-model="image.description" placeholder="Description" required>
+        <input type="hidden" v-model="image.url" required>
+        <img :src="`${URLapi}${image.url}`" alt="Preview" style="max-width: 200px; max-height: 200px;">
+        <button type="button" @click="removeImageDelete(index)">Supprimer image</button>
+</span>
+
+        <span v-if="!image.url"> 
+        <input type="text" v-model="image.title" placeholder="Titre" required>
+        <input type="text" v-model="image.alt" placeholder="alt" required>
+        <input type="text" v-model="image.description" placeholder="Description" required>
+        <input type="file" v-if="!image.file" @change="handleFileChange($event, index)" required>
+        <img v-if="image.preview" :src="image.preview" alt="Preview" style="max-width: 200px; max-height: 200px;">
+
+        <button v-if="image.file" type="button" @click="deleteFile(index)">Supprimer fichier</button>
+        <button type="button" @click="removeImage(index)">Supprimer image</button>
+      </span>
+
+
+      </div>
+      <br />
+      <button type="button" @click="addImage">Ajouter une image</button>
+
+
 
       <button type="submit">Enregistrer</button>
       <button type="button" @click="redirectToProjectList">Annuler</button>
@@ -63,6 +96,13 @@ export default {
       originalLinks: [],
       links: [],
       skills: [], // Liste des skills de compétences      
+      orignaleImages: [],
+      images: [],
+      preview: "",
+      file: undefined, // URL du logo de la compétence
+      ImageToDelete: [], // Image à supprimer
+      URLapi: config.apiUrl,
+
       error: null,
       success: null,
       projectId: null // Ajout de la propriété educationId pour stocker l'identifiant de l'éducation en cours de modification
@@ -79,6 +119,19 @@ export default {
     this.loadProject();
   },
   methods: {
+    
+    handleFileChange(event, index) {
+      const selectedFile = event.target.files[0];
+      if (selectedFile) {
+        this.images[index].file = selectedFile;
+        this.images[index].preview = URL.createObjectURL(selectedFile);
+      }
+    },
+    deleteFile(index) {
+      this.images[index].file = undefined;
+      this.images[index].preview = '';
+    },
+
     async loadSkills() {
       try {
         // Envoi de la requête GET pour récupérer la liste des skills de compétences
@@ -123,20 +176,52 @@ export default {
           this.links = response.data.links;
           this.originalLinks = response.data.links.slice(); // Créer une copie distincte
         }
+        if (response.data.images !== null) {
+          this.images = response.data.images;
+          this.orignaleImages = response.data.images.slice(); // Créer une copie distincte
+        }
+
       } catch (error) {
         console.error("Erreur lors du chargement des détails de la project :", error);
       }
     },
     async submitForm() {
       try {
-        // Envoi de la requête PATCH pour modifier la catégorie de compétences
-        await axios.patch(`${config.apiUrl}/project/${this.projectId}`, {
-          name: this.name,
-          details: this.details,
-          shortDescription: this.shortDescription,
-          skills: this.selectedSkills,
-          links: this.links
-        });
+
+   // Créer un objet FormData pour envoyer le fichier avec la requête POST
+   const formData = new FormData();
+      formData.append('name', this.name);
+      formData.append('details', this.details);
+      formData.append('shortDescription', this.shortDescription);
+      formData.append('skills', this.selectedSkills);
+      formData.append('ImageToDelete', this.ImageToDelete);
+
+  // Ajouter les liens à FormData
+  this.links.forEach((link, index) => {
+      formData.append(`links[${index}][name]`, link.name);
+      formData.append(`links[${index}][url]`, link.url);
+    });// Ajouter les fichiers d'image à FormData
+this.images.forEach((image, index) => {
+      formData.append(`images[${index}][title]`, image.title);
+      formData.append(`images[${index}][alt]`, image.alt);
+      formData.append(`images[${index}][description]`, image.description);
+      formData.append(`images[${index}][url]`, image.url);
+      if (image.file) {
+        formData.append(`images[${index}][file]`, image.file);
+      }
+    });   
+    
+    
+    
+    // Envoi de la requête POST avec les données FormData
+    await axios.patch(`${config.apiUrl}/project/${this.projectId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+
+
         // Affichage du succès
         this.success = this.originalName + " modifié";
 
@@ -161,18 +246,30 @@ export default {
       this.shortDescription = this.originalShortDescription;
       this.selectedSkills = this.originalSelectedSkills.slice();
       this.links = this.originalLinks.slice()
-
+      this.images = this.orignaleImages.slice()
+      this.ImageToDelete = []
     },
     redirectToProjectList() {
       // Redirection vers la page des catégories de compétences
       this.$router.push('/get-projects');
     },
     addLink() {
-        this.links.push({ name: '', url: '' });
+      this.links.push({ name: '', url: '' });
     },
     removeLink(index) {
-        this.links.splice(index, 1);
+      this.links.splice(index, 1);
     },
+    addImage() {
+      this.images.push({ title: "", alt: "", description: "", file: undefined, preview: "" });
+    },
+    removeImage(index) {
+      this.images.splice(index, 1);
+    },
+    removeImageDelete(index) {
+      this.ImageToDelete.push(this.images[index].url);
+      this.images.splice(index, 1);
+console.log(this.ImageToDelete)
+    }
   }
 };
 </script>

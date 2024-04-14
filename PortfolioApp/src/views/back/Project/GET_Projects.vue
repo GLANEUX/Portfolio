@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Liste des cproject</h1>
-    
+
     <div v-if="projects.length === 0">
       <p>Aucune projects pour le moment.</p>
       <!-- Lien vers la création d'une nouvelle projects -->
@@ -9,65 +9,79 @@
     </div>
 
     <div v-else>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Details</th>
-          <th>shortDescription</th>
-          <th>Skills</th>
-          <th>Links</th>
-          <th>Date de création</th>
-          <th>Date de mise à jour</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="project in projects" :key="project._id">
-          <td>{{ project._id }}</td>
-          <td>{{ project.name }}</td>
-          <td>{{ project.details }}</td>
-          <td>{{ project.shortDescription }}</td>
-          <td>
-            <div v-if="project.skills">
-              <span v-for="(skillName, index) in project.skillNames" :key="index">
-                <span v-if="index !== 0">, </span>
-                <span>{{ skillName }}</span>
-              </span>
-            </div>
-          </td>
-          
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Details</th>
+            <th>shortDescription</th>
+            <th>Skills</th>
+            <th>Links</th>
+            <th>Images</th>
+            <th>Date de création</th>
+            <th>Date de mise à jour</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="project in projects" :key="project._id">
+            <td>{{ project._id }}</td>
+            <td>{{ project.name }}</td>
+            <td>{{ project.details }}</td>
+            <td>{{ project.shortDescription }}</td>
+            <td>
+              <div v-if="project.skills">
+                <span v-for="(skillName, index) in project.skillNames" :key="index">
+                  <span v-if="index !== 0">, </span>
+                  <span>{{ skillName }}</span>
+                </span>
+              </div>
+            </td>
 
-    <td>
-      <!-- Afficher les liens -->
-      <div v-if="project.links ">
-        <div v-for="(link, index) in project.links" :key="index">
-          <a :href="link.url" target="_blank">{{ link.name }}</a>
-        </div>
+
+            <td>
+              <!-- Afficher les liens -->
+              <div v-if="project.links">
+                <div v-for="(link, index) in project.links" :key="index">
+                  <a :href="link.url" target="_blank">{{ link.name }}</a>
+                </div>
+              </div>
+            </td>
+ 
+
+
+            <td>
+              <div v-if="project.images">
+                <span v-for="(image, index) in project.images" :key="index">
+                  <span v-if="index !== 0">, <br></span>
+                  <img :src="`${URLapi}${image.url}`" :alt="`${image.url}`" width=25px>
+                  {{ image.title }}{{ image.description }}
+                </span>
+              </div>
+            </td>
+
+            <td>{{ project.created_at }}</td>
+            <td>{{ project.updated_at }}</td>
+            <td>
+              <button @click="confirmDelete(project)">Supprimer</button>
+              <button @click="redirectToEdit(project._id)">Modifier</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Confirmation de suppression -->
+      <div v-if="deleteConfirmation" class="delete-confirmation">
+        <p>Voulez-vous vraiment supprimer {{ deleteConfirmation.name }} ?</p>
+        <button @click="cancelDelete">Annuler</button>
+        <button @click="deleteConfirmed">Confirmer</button>
       </div>
-    </td>
-          <td>{{ project.created_at }}</td>
-          <td>{{ project.updated_at }}</td>
-          <td>
-            <button @click="confirmDelete(project)">Supprimer</button>
-            <button @click="redirectToEdit(project._id)">Modifier</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
 
-    <!-- Confirmation de suppression -->
-    <div v-if="deleteConfirmation" class="delete-confirmation">
-      <p>Voulez-vous vraiment supprimer {{ deleteConfirmation.name }} ?</p>
-      <button @click="cancelDelete">Annuler</button>
-      <button @click="deleteConfirmed">Confirmer</button>
-    </div>
-
-    <!-- Message de succès après la suppression -->
-    <div v-if="deleteSuccessMessage" class="delete-success">
-      {{ deleteSuccessMessage }} supprimé avec succès.
-    </div>
+      <!-- Message de succès après la suppression -->
+      <div v-if="deleteSuccessMessage" class="delete-success">
+        {{ deleteSuccessMessage }} supprimé avec succès.
+      </div>
     </div>
   </div>
 </template>
@@ -81,6 +95,7 @@ export default {
     return {
       projects: [], // Tableau pour stocker les catégories de compétences récupérées
       deleteConfirmation: null, // Stocke temporairement les informations de confirmation de suppression
+      URLapi: config.apiUrl,
       deleteSuccessMessage: "" // Message de succès après la suppression
     };
   },

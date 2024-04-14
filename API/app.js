@@ -28,8 +28,7 @@ const uploadsDirectory = path.join(__dirname, './src/uploads');
 // Définir une route pour servir les fichiers statiques dans le répertoire d'uploads
 app.use('/uploads', express.static(uploadsDirectory));
 
-const uploadRoutes = require('./src/routes/uploadRoutes.js');
-app.use('/', uploadRoutes);
+
 
 const certificationRoutes = require('./src/routes/certificationRoutes.js');
 app.use('/', certificationRoutes);

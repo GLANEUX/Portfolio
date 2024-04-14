@@ -333,9 +333,8 @@ exports.updateSkill = async (req, res) => {
 
     }
 
-    let logo
     if (!file) {
-      logo = undefined;
+      updatedFields.file = undefined;
     } else {
       updatedFields.file = "/uploads/" + req.file.originalname;
     }

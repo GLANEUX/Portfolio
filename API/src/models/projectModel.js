@@ -27,27 +27,24 @@ const projectSchema = new mongoose.Schema({
             }
         }
     ],
-    // images: {
-    //     type: [String]
-    // },
-    // images: [
-    //     {
-    //         title: {
-    //             type: String,
-    //             required: true
-    //         },
-    //         alt: {
-    //             type: String
-    //         },
-    //         description: {
-    //             type: String
-    //         },
-    //         url: {
-    //             type: String,
-    //             required: true
-    //         }
-    //     }
-    // ],
+    images: [
+        {
+            title: {
+                type: String,
+                required: true
+            },
+            alt: {
+                type: String
+            },
+            description: {
+                type: String
+            },
+            url: {
+                type: String,
+                required: true
+            }
+        }
+    ],
     skills: {
         type: [String]
     },

@@ -1,11 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const projectController = require('../controllers/projectController');
+const multer = require('multer');
 
-// /project
-router
-  .route('/project')
-  .post(projectController.createProject);
+
+// Configuration de multer pour stocker temporairement les fichiers
+const upload = multer({ storage: multer.memoryStorage() });
+
+// POST /skill
+router.post('/project', upload.any('file'), projectController.createProject);
+
 
 // /projects
 router
@@ -17,7 +21,7 @@ router
 router
   .route('/project/:id')
   .get(projectController.getProjectById)
-  .patch(projectController.updateProject)
+  .patch(upload.any('file'), projectController.updateProject)
   .delete(projectController.deleteProject);
 
 module.exports = router;
