@@ -8,10 +8,12 @@ const skillCategorySchema = new mongoose.Schema({
         required: true
     },
     created_at: {
-        type: String
+        type: String,
+        require: true
     },
     updated_at: {
-        type: String
+        type: String,
+        require: true
     }
 });
 

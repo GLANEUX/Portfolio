@@ -2,17 +2,29 @@ const Education = require('../models/educationModel');
 const Skills = require('../models/skillModel');
 
 
-// POST /education
-// Crée une Education
+//! POST /education
+//! Crée une Education
 exports.createEducation = async (req, res) => {
   try {
     // Extraire les données de la requête POST en supprimant les espaces avant et après (trim)
-    let { school, program, details, skills } = req.body;
+    let { school, program, details, skills, start_date, end_date } = req.body;
 
     // Vérifier si les champs obligatoires sont présents dans la requête
     if (!school || school.trim() === "") {
       return res.status(400).json({ error: 'Missing required parameters: school' });
     }
+
+    // Vérifier si les champs obligatoires sont présents dans la requête
+    if (!start_date || start_date.trim() === "") {
+      return res.status(400).json({ error: 'Missing required parameters: start_date' });
+    }
+
+    // Vérifier si les champs obligatoires sont présents dans la requête
+    if (!end_date || end_date.trim() === "") {
+      return res.status(400).json({ error: 'Missing required parameters: end_date' });
+    }
+
+
 
     // Vérifier si Educations est fourni 
     if (skills !== undefined) {
@@ -29,7 +41,7 @@ exports.createEducation = async (req, res) => {
       const invalidIds = [];
       const notFoundIds = [];
 
-      let hasValidSkill = false; // Flag pour indiquer si au moins une catégorie de compétences valide est trouvée
+      let hasValidSkill = false; // Flag pour indiquer si au moins une skill valide est trouvée
       for (const skillId of categories) {
         const trimmedId = skillId.trim();
         if (trimmedId === '') {
@@ -49,7 +61,7 @@ exports.createEducation = async (req, res) => {
             // Si la catégorie n'est pas trouvée, ajouter à la liste des IDs invalides
             notFoundIds.push(trimmedId);
           } else {
-            hasValidSkill = true; // Mettre le flag à true si une catégorie de compétences valide est trouvée
+            hasValidSkill = true; // Mettre le flag à true si une skill valide est trouvée
           }
         }
       }
@@ -66,25 +78,26 @@ exports.createEducation = async (req, res) => {
         return res.status(400).json({ error: `Duplicate skills IDs: ${duplicateIds.join(', ')}` });
       }
       if (!hasValidSkill) {
-        // Si aucune catégorie de compétences valide n'est trouvée, définir skills à undefined
+        // Si aucune skill valide n'est trouvée, définir skills à undefined
         skills = undefined;
       }
     }
-
 
     // Créer une nouvelle instance de Education avec les données
     const newEducation = new Education({
       school: school.trim(),
       program: program !== undefined ? (program.trim() !== "" ? program.trim() : undefined) : program,
       details: details !== undefined ? (details.trim() !== "" ? details.trim() : undefined) : details,
-      skills: skills !== undefined ? (Array.isArray(skills) ? skills.filter(id => id.trim() !== '')/* trim() ne mache pas */ : [skills.trim()]) : null
+      skills: skills !== undefined ? (Array.isArray(skills) ? skills.filter(id => id.trim() !== '')/* trim() ne mache pas */ : [skills.trim()]) : null,
+      start_date: start_date.trim(),
+      end_date: end_date.trim()
     });
 
     // Enregistrer la nouvelle Education dans la base de données
-    const skill = await newEducation.save();
+    const education = await newEducation.save();
 
     // Répondre avec la nouvelle Education créée
-    res.status(201).json(skill);
+    res.status(201).json(education);
   } catch (err) {
     // Gérer les erreurs
     console.error(err);
@@ -93,12 +106,16 @@ exports.createEducation = async (req, res) => {
   }
 };
 
-// GET /educations
+//! GET /educations
 // Récupère toutes les educations
 exports.getAllEducations = async (req, res) => {
   try {
     // Trouver toutes les educations dans la base de données
     const educations = await Education.find();
+
+    if (!educations) {
+      return res.status(404).json({ error: 'Aucune éducation pour le moment' });
+    }
 
     // Répondre avec les educations trouvées
     res.status(200).json(educations);
@@ -109,6 +126,8 @@ exports.getAllEducations = async (req, res) => {
     res.status(500).json({ error: 'An unexpected error occurred on the server.' });
   }
 };
+
+
 // GET /education/:id
 // Récupère une education par son ID
 exports.getEducationById = async (req, res) => {
@@ -141,8 +160,8 @@ exports.getEducationById = async (req, res) => {
   }
 };
 
-// DELETE /education/:id
-// Supprime une education par son ID
+//! DELETE /education/:id
+//! Supprime une education par son ID
 exports.deleteEducation = async (req, res) => {
   try {
     // Recherche si l'id est vide
@@ -153,19 +172,20 @@ exports.deleteEducation = async (req, res) => {
     const skillIdRegex = /^[0-9a-fA-F]{24}$/;
     if (!skillIdRegex.test(req.params.id.trim())) {
       return res.status(400).json({ error: 'Not an ID' });
-
     }
-
-
+    // Rechercher la education à supprimer dans la base de données par son ID et la supprimer
+    const education = await Education.findById(req.params.id);
     // Vérifier si la education existe
     if (!education) {
       // Si la education n'est pas trouvée, renvoyer une réponse avec le code 404
       return res.status(404).json({ error: 'Education not found' });
     }
-    // Rechercher la education à supprimer dans la base de données par son ID et la supprimer
-    const education = await Education.findByIdAndDelete(req.params.id);
+
+
+    await Education.findByIdAndDelete(req.params.id);
+
     // Si la education est trouvée et supprimée avec succès, renvoyer une réponse avec le code 200
-    res.status(200).send('Education deleted');
+    res.status(200).send(`${education.school} deleted`);
   } catch (error) {
     // Gérer les erreurs
     console.error(error);
@@ -174,9 +194,8 @@ exports.deleteEducation = async (req, res) => {
   }
 };
 
-//Perfectionner
-// PATCH /education/:id
-// Modifie un projet par son ID
+//! PATCH /education/:id
+//! Modifie un projet par son ID
 exports.updateEducation = async (req, res) => {
   try {
 
@@ -188,7 +207,6 @@ exports.updateEducation = async (req, res) => {
     const skillIdRegex = /^[0-9a-fA-F]{24}$/;
     if (!skillIdRegex.test(req.params.id.trim())) {
       return res.status(400).json({ error: 'Not an ID' });
-
     }
 
     // Rechercher le projet à mettre à jour
@@ -203,36 +221,33 @@ exports.updateEducation = async (req, res) => {
     // Vérifier si le champ 'school' est fourni et est de type chaîne de caractères non vide
     if (req.body.school !== undefined && req.body.school.trim() !== '') {
       updatedFields.school = req.body.school.trim();
+    } else {
+      return res.status(400).json({ error: 'School ne peux pas être vide' });
     }
 
-    // Vérifier si le champ 'program' est fourni et est de type chaîne de caractères non vide
-    if (req.body.program !== undefined && req.body.program.trim() !== '') {
-      if (req.body.program.trim() == "delete") {
-        // Utiliser l'opérateur $unset de Mongoose pour supprimer le champ program
-        updatedFields.$unset = { program: "" };
-      } else {
-        updatedFields.program = req.body.program.trim();
-      }
+    // Vérifier si le champ 'end_date' est fourni et est de type chaîne de caractères non vide
+    if (req.body.end_date !== undefined && req.body.end_date.trim() !== '') {
+      updatedFields.end_date = req.body.end_date.trim();
+    }else {
+      return res.status(400).json({ error: 'end date doit être spécifier' });
+    }
+    // Vérifier si le champ 'start_date' est fourni et est de type chaîne de caractères non vide
+    if (req.body.start_date !== undefined && req.body.start_date.trim() !== '') {
+      updatedFields.start_date = req.body.start_date.trim();
+    }else {
+      return res.status(400).json({ error: 'start date doit être spécifier' });
     }
 
-
-    // Vérifier si le champ 'details' est fourni et est de type chaîne de caractères non vide
-    if (req.body.details !== undefined && req.body.details.trim() !== '') {
-      if (req.body.details.trim() == "delete") {
-        // Utiliser l'opérateur $unset de Mongoose pour supprimer le champ shortDescription
-        updatedFields.$unset = { details: "" };
-      } else {
-        updatedFields.details = req.body.details.trim();
-      }
-    }
-
+    updatedFields.program = req.body.program ? req.body.program.trim() : req.body.program
+    updatedFields.details = req.body.details ? req.body.details.trim() : req.body.details
+  
 
     let skills = req.body.skills;
-    // Vérifier si le champ 'skills' est fourni
-    if (skills === "null") {
-      updatedFields.skills = null;
-    } else {
 
+    if (skills.length === 0) {
+      skills = undefined;
+    }
+    
       // Vérifier si skillCategory est fourni
       if (skills !== undefined) {
         // Si skillCategory n'est pas un tableau, le transformer en tableau
@@ -248,7 +263,7 @@ exports.updateEducation = async (req, res) => {
 
         // Vérifier que chaque ID de skillCategory existe
         const invalidIds = [];
-        let hasValidCategory = false; // Flag pour indiquer si au moins une catégorie de compétences valide est trouvée
+        let hasValidCategory = false; // Flag pour indiquer si au moins une skill valide est trouvée
         for (const categoryId of categories) {
           const trimmedId = categoryId.trim();
           if (trimmedId === '') {
@@ -268,7 +283,7 @@ exports.updateEducation = async (req, res) => {
               // Si la catégorie n'est pas trouvée, ajouter à la liste des IDs non trouvés
               notFoundIds.push(trimmedId);
             } else {
-              hasValidCategory = true; // Mettre le flag à true si une catégorie de compétences valide est trouvée
+              hasValidCategory = true; // Mettre le flag à true si une skill valide est trouvée
             }
           }
         }
@@ -285,18 +300,17 @@ exports.updateEducation = async (req, res) => {
           return res.status(400).json({ error: `Skill IDs not found: ${notFoundIds.join(', ')}` });
         }
         if (!hasValidCategory) {
-          // Si aucune catégorie de compétences valide n'est trouvée, définir skillCategory à undefined
-          skills = undefined;
+          // Si aucune skill valide n'est trouvée, définir skillCategory à undefined
+          updatedFields.skills = undefined;
         } else {
           // Filtrer les identifiants vides et mettre à jour les catégories
           updatedFields.skills = categories.filter(id => id.trim() !== '');
 
         }
       } else {
-        skills = undefined;
+        updatedFields.skills = null;
       }
-    }
-
+    
     // Mettre à jour le projet avec les champs mis à jour
     const updatedEducation = await Education.findByIdAndUpdate(
       req.params.id,

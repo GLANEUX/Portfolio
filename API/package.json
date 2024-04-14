@@ -2,10 +2,10 @@
   "name": "api",
   "version": "1.0.0",
   "description": "Portfolio API",
-  "main": "./src/app.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -14,11 +14,15 @@
   "author": "Océane GLANEUX",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "fs": "^0.0.1-security",
     "moment-timezone": "^0.5.45",
     "mongodb": "^6.5.0",
     "mongoose": "^8.2.1",
+    "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.0",
+    "path": "^0.12.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
   }

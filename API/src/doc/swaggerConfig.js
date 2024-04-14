@@ -17,14 +17,10 @@ const swaggerOptions = {
         email: "o.glaneux@gmail.com",
       },
     },
-    servers: [
-      {
-        url: "http://localhost:3000",
-      },
-    ],
+    servers: [process.env.HEROKU_URL],
   },
   // Specify the correct path to your YAML file
-  apis: ["./doc.yaml"],
+  apis: ['./src/doc/doc.yaml'],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);

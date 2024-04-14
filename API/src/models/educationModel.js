@@ -3,12 +3,14 @@ const Schema = mongoose.Schema;
 const { updateCreatedAt, updateUpdatedAt } = require('../middleware/timestamps.js');
 
 const educationSchema = new mongoose.Schema({
-    // start_date: {
-    //     type: String
-    // },
-    // end_date: {
-    //     type: String
-    // },
+    start_date: {
+        type: String,
+        require: true
+    },
+    end_date: {
+        type: String,
+        require: true
+    },
     school: {
         type: String,
         require: true
@@ -23,10 +25,13 @@ const educationSchema = new mongoose.Schema({
         type: [String]
     },
     created_at: {
-        type: String
+        type: String,
+        require: true
+        
     },
     updated_at: {
-        type: String
+        type: String,
+        require: true
     }
 });
 

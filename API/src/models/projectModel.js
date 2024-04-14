@@ -50,9 +50,11 @@ const projectSchema = new mongoose.Schema({
     },
     created_at: {
         type: String,
+        require: true
     },
     updated_at: {
         type: String,
+        require: true
     }
 });
 
