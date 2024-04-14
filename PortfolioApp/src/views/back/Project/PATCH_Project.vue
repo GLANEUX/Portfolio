@@ -10,17 +10,17 @@
       <input type="text" id="shortDescription" v-model="shortDescription" required>
       <br>
       <label>Catégories de compétences :</label>
+
       <div>
         <!-- Boucle sur les skills uniquement s'il y en a -->
         <button v-if="skills.length > 0" v-for="skill in skills" :key="skill._id"
-          :class="{ selected: isSelected(skill._id) }" @click="toggleSkill(skill._id)" type="button">
+          :class="{ selected: isSelected(skill._id) }" @click="toggleSkill(skill._id)" :value="skill._id" type="button">
           {{ skill.name }}
         </button>
         <!-- Affiche "Ajouter un skill" s'il n'y a aucun skill -->
         <span v-else> <router-link to="/add-skill">Ajouter un skill</router-link>
         </span>
       </div>
-
       <button type="submit">Enregistrer</button>
       <button type="button" @click="redirectToProjectList">Annuler</button>
       <button type="button" @click="resetForm">Réinitialiser</button>
@@ -51,8 +51,8 @@ export default {
       selectedSkills: [], // Skills de compétences sélectionnées
       skills: [], // Liste des skills de compétences      
       error: null,
-    success: null,
-    projectId: null // Ajout de la propriété educationId pour stocker l'identifiant de l'éducation en cours de modification
+      success: null,
+      projectId: null // Ajout de la propriété educationId pour stocker l'identifiant de l'éducation en cours de modification
 
     };
   },
@@ -103,9 +103,9 @@ export default {
         this.shortDescription = response.data.shortDescription;
         this.originalShortDescription = response.data.shortDescription; // Stocker le nom d'origine     
         if (response.data.skills !== null) {
-      this.selectedSkills = response.data.skills;
-      this.originalSelectedSkills = response.data.skills.slice(); // Créer une copie distincte
-    }
+          this.selectedSkills = response.data.skills;
+          this.originalSelectedSkills = response.data.skills.slice(); // Créer une copie distincte
+        }
       } catch (error) {
         console.error("Erreur lors du chargement des détails de la project :", error);
       }
@@ -119,11 +119,11 @@ export default {
           shortDescription: this.shortDescription,
           skills: this.selectedSkills
         });
-           // Affichage du succès
-           this.success = this.originalName + " modifié" ;
+        // Affichage du succès
+        this.success = this.originalName + " modifié";
 
-// Effacer les messages d'erreur précédents
-this.error = null;
+        // Effacer les messages d'erreur précédents
+        this.error = null;
         // Masquer le message de succès après 3 secondes
         setTimeout(() => {
           this.success = null;

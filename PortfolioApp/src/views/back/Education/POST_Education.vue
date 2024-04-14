@@ -17,10 +17,14 @@
       <br>
       <label>Catégories de compétences :</label>
       <div>
-        <button v-for="skill in skills" :key="skill._id" :class="{ selected: isSelected(skill._id) }"
-          @click="toggleSkill(skill._id)" type="button">
+        <!-- Boucle sur les skills uniquement s'il y en a -->
+        <button v-if="skills.length > 0" v-for="skill in skills" :key="skill._id"
+          :class="{ selected: isSelected(skill._id) }" @click="toggleSkill(skill._id)" type="button">
           {{ skill.name }}
         </button>
+        <!-- Affiche "Ajouter un skill" s'il n'y a aucun skill -->
+        <span v-else> <router-link to="/add-skill">Ajouter un skill</router-link>
+        </span>
       </div>
       <button type="submit">Ajouter</button>
     </form>

@@ -12,16 +12,16 @@
       <input type="date" id="date" v-model="date" required>
       <br>
       <label>Catégories de compétences :</label>
+
       <div>
-        <button v-for="skill in skills" 
-        :key="skill._id" 
-        :class="{ selected: isSelected(skill._id) }"
-          @click="toggleSkill(skill._id)" 
-          :value="skill._id" 
-          type="button"
-          >
+        <!-- Boucle sur les skills uniquement s'il y en a -->
+        <button v-if="skills.length > 0" v-for="skill in skills" :key="skill._id"
+          :class="{ selected: isSelected(skill._id) }" @click="toggleSkill(skill._id)" :value="skill._id" type="button">
           {{ skill.name }}
         </button>
+        <!-- Affiche "Ajouter un skill" s'il n'y a aucun skill -->
+        <span v-else> <router-link to="/add-skill">Ajouter un skill</router-link>
+        </span>
       </div>
       <button type="submit">Enregistrer</button>
       <button type="button" @click="redirectToCertificationList">Annuler</button>
@@ -107,7 +107,7 @@ export default {
           this.originalSelectedSkills = response.data.skills.slice(); // Créer une copie distincte
         }
         this.originalDate = response.data.date;
-          this.date = response.data.date;
+        this.date = response.data.date;
       } catch (error) {
         console.error("Erreur lors du chargement des détails de la certification :", error);
       }
@@ -128,14 +128,14 @@ export default {
         this.error = null;
         // Masquer le message de succès après 3 secondes
         setTimeout(() => {
-          this.success = null; 
+          this.success = null;
           // Redirection vers la page des catégories de compétences après 3 secondes
           this.redirectToCertificationList();
         }, 3000);
       } catch (error) {
         this.error = "Erreur lors de la modification de la catégorie de compétences : " + error.response.data.error;
         this.success = null;
-        }
+      }
     },
     resetForm() {
       // Réinitialiser le champ name avec le nom d'origine

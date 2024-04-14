@@ -15,11 +15,16 @@
       <button type="button" @click="setCurrentDate" :class="{ selected: useCurrentDate }">aujourd'hui</button>
       <br>
       <label>Catégories de compétences :</label>
+
       <div>
-        <button v-for="skill in skills" :key="skill._id" :class="{ selected: isSelected(skill._id) }"
-          @click="toggleSkill(skill._id)" :value="skill._id" type="button">
+        <!-- Boucle sur les skills uniquement s'il y en a -->
+        <button v-if="skills.length > 0" v-for="skill in skills" :key="skill._id"
+          :class="{ selected: isSelected(skill._id) }" @click="toggleSkill(skill._id)" :value="skill._id" type="button">
           {{ skill.name }}
         </button>
+        <!-- Affiche "Ajouter un skill" s'il n'y a aucun skill -->
+        <span v-else> <router-link to="/add-skill">Ajouter un skill</router-link>
+        </span>
       </div>
       <button type="submit">Enregistrer</button>
       <button type="button" @click="redirectToExperienceList">Annuler</button>
@@ -44,26 +49,26 @@ import config from "@/config.js";
 
 export default {
   data() {
-  return {
-    originalCompany: "", // Champ pour stocker le nom d'origine de la catégorie de compétences
-    company: "", // Champ pour stocker le nom de la catégorie de compétences
-    originalDetails: "", // Champ pour stocker le nom d'origine de la catégorie de compétences
-    details: "", // Champ pour stocker le nom de la catégorie de compétences
-    originalJob_title: "",
-    job_title: "",
-    originalSelectedSkills: [], // Skills de compétences sélectionnées d'origine
-    selectedSkills: [], // Skills de compétences sélectionnées
-    skills: [], // Liste des skills de compétences
-    error: null,
-    success: null,
-    useCurrentDate: false,
-    originalEnd_date: "",
-    end_date: "",
-    originalStart_date: "",
-    start_date: "",
-    experienceId: null // Ajout de la propriété experienceId pour stocker l'identifiant de l'éducation en cours de modification
-  };
-},
+    return {
+      originalCompany: "", // Champ pour stocker le nom d'origine de la catégorie de compétences
+      company: "", // Champ pour stocker le nom de la catégorie de compétences
+      originalDetails: "", // Champ pour stocker le nom d'origine de la catégorie de compétences
+      details: "", // Champ pour stocker le nom de la catégorie de compétences
+      originalJob_title: "",
+      job_title: "",
+      originalSelectedSkills: [], // Skills de compétences sélectionnées d'origine
+      selectedSkills: [], // Skills de compétences sélectionnées
+      skills: [], // Liste des skills de compétences
+      error: null,
+      success: null,
+      useCurrentDate: false,
+      originalEnd_date: "",
+      end_date: "",
+      originalStart_date: "",
+      start_date: "",
+      experienceId: null // Ajout de la propriété experienceId pour stocker l'identifiant de l'éducation en cours de modification
+    };
+  },
 
   async created() {
     // Charger la liste des catégories de compétences lors de la création du composant
@@ -79,7 +84,7 @@ export default {
     updateEndDate() {
       if (this.useCurrentDate) {
         this.end_date = ""; // ou null si vous préférez
-      } 
+      }
     },
     async loadSkills() {
       try {
@@ -107,33 +112,33 @@ export default {
       return this.selectedSkills.includes(skillId);
     },
     async loadExperience() {
-  try {
-    // Effectuer une requête GET pour récupérer les détails de la catégorie
-    const response = await axios.get(`${config.apiUrl}/experience/${this.experienceId}`);
-    this.company = response.data.company;
-    this.originalCompany = response.data.company; // Stocker le nom d'origine
-    this.details = response.data.details;
-    this.originalDetails = response.data.details; // Stocker le nom d'origine     
-    this.job_title = response.data.job_title;
-    this.originalJob_title = response.data.job_title; // Stocker le nom d'origine     
-    if (response.data.skills !== null) {
-      this.selectedSkills = response.data.skills;
-      this.originalSelectedSkills = response.data.skills.slice(); // Créer une copie distincte
-    }
-    this.originalEnd_date = response.data.end_date;
-    this.originalStart_date = response.data.start_date;
-    this.start_date = response.data.start_date;
-    this.end_date = response.data.end_date;
+      try {
+        // Effectuer une requête GET pour récupérer les détails de la catégorie
+        const response = await axios.get(`${config.apiUrl}/experience/${this.experienceId}`);
+        this.company = response.data.company;
+        this.originalCompany = response.data.company; // Stocker le nom d'origine
+        this.details = response.data.details;
+        this.originalDetails = response.data.details; // Stocker le nom d'origine     
+        this.job_title = response.data.job_title;
+        this.originalJob_title = response.data.job_title; // Stocker le nom d'origine     
+        if (response.data.skills !== null) {
+          this.selectedSkills = response.data.skills;
+          this.originalSelectedSkills = response.data.skills.slice(); // Créer une copie distincte
+        }
+        this.originalEnd_date = response.data.end_date;
+        this.originalStart_date = response.data.start_date;
+        this.start_date = response.data.start_date;
+        this.end_date = response.data.end_date;
 
-    // Vérifier si end_date a la valeur "aujourd'hui" pour sélectionner automatiquement le bouton "aujourd'hui"
-    if (this.end_date === "aujourd'hui") {
-      this.useCurrentDate = true;
-    }
-    this.updateEndDate();
-  } catch (error) {
-    console.error("Erreur lors du chargement des détails de la experience :", error);
-  }
-},
+        // Vérifier si end_date a la valeur "aujourd'hui" pour sélectionner automatiquement le bouton "aujourd'hui"
+        if (this.end_date === "aujourd'hui") {
+          this.useCurrentDate = true;
+        }
+        this.updateEndDate();
+      } catch (error) {
+        console.error("Erreur lors du chargement des détails de la experience :", error);
+      }
+    },
 
     async submitForm() {
       try {
@@ -151,8 +156,8 @@ export default {
           end_date: end_dateforma, // Utilisez la version formatée de la date
           start_date: this.start_date
         });
-                // Affichage du succès
-        this.success = this.originalCompany + " modifié" ;
+        // Affichage du succès
+        this.success = this.originalCompany + " modifié";
 
         // Effacer les messages d'erreur précédents
         this.error = null;
@@ -170,22 +175,22 @@ export default {
       }
     },
     resetForm() {
-  // Réinitialiser le formulaire avec les valeurs d'origine
-  this.company = this.originalCompany;
-  this.details = this.originalDetails;
-  this.job_title = this.originalJob_title;
-  this.start_date = this.originalStart_date;
-  this.end_date = this.originalEnd_date;
-  this.selectedSkills = this.originalSelectedSkills.slice();
-  // Vérifier si end_date a la valeur "aujourd'hui" pour sélectionner automatiquement le bouton "aujourd'hui"
-  if (this.end_date === "aujourd'hui") {
-    this.useCurrentDate = true;
-  } else {
-    this.useCurrentDate = false;
-  }
-  // Mettre à jour la date de fin lors de la réinitialisation du formulaire
-  this.updateEndDate();
-},
+      // Réinitialiser le formulaire avec les valeurs d'origine
+      this.company = this.originalCompany;
+      this.details = this.originalDetails;
+      this.job_title = this.originalJob_title;
+      this.start_date = this.originalStart_date;
+      this.end_date = this.originalEnd_date;
+      this.selectedSkills = this.originalSelectedSkills.slice();
+      // Vérifier si end_date a la valeur "aujourd'hui" pour sélectionner automatiquement le bouton "aujourd'hui"
+      if (this.end_date === "aujourd'hui") {
+        this.useCurrentDate = true;
+      } else {
+        this.useCurrentDate = false;
+      }
+      // Mettre à jour la date de fin lors de la réinitialisation du formulaire
+      this.updateEndDate();
+    },
 
     redirectToExperienceList() {
       // Redirection vers la page des catégories de compétences

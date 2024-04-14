@@ -10,17 +10,16 @@
       <input v-model="rating" type="number" id="rating" min="0" max="100" :disabled="rating === undefined">
            <br>
       <label>Catégories de compétences :</label>
+
       <div>
-        <button
-          v-for="category in skillCategories"
-          :key="category._id"
-          :class="{ selected: isSelected(category._id) }"
-          @click="toggleCategory(category._id)"
-          :value="category._id"
-          type="button"
-        >
+        <!-- Boucle sur les skills uniquement s'il y en a -->
+        <button v-if="skillCategories.length > 0" v-for="category in skillCategories" :key="category._id"
+          :class="{ selected: isSelected(category._id) }" @click="toggleCategory(category._id)" :value="category._id" type="button">
           {{ category.name }}
         </button>
+        <!-- Affiche "Ajouter un skill" s'il n'y a aucun skill -->
+        <span v-else> <router-link to="/add-skill-category">Ajouter un category</router-link>
+        </span>
       </div>
 
       <button type="submit">Enregistrer</button>

@@ -25,8 +25,8 @@
           <td>{{ category.created_at }}</td>
           <td>{{ category.updated_at }}</td>
           <td>
-              <button @click="confirmDelete(certification)">Supprimer</button>
-              <button @click="redirectToEdit(certification._id)">Modifier</button>
+              <button @click="confirmDelete(category)">Supprimer</button>
+              <button @click="redirectToEdit(category._id)">Modifier</button>
             </td>
           </tr>
         </tbody>
