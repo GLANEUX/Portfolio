@@ -4,20 +4,21 @@ const Project = require('../models/projectModel');
 const Experience = require('../models/experienceModel');
 const Education = require('../models/educationModel');
 const Certification = require('../models/certificationModel');
+const fs = require('fs');
+const path = require('path');
+
+
+
 
 //! POST /skill
 //! Crée une skill
 exports.createSkill = async (req, res) => {
   try {
-    // let logo
-    //   if(!req.file){
-    //     logo = undefined;
-    //   }else{
-    //     logo = "/uploads/"+req.file.filename;
-    //   }
 
     // Extraire les données de la requête POST en supprimant les espaces avant et après (trim)
     let { name, rating, skillCategory } = req.body;
+    let file = req.file; // Accéder au fichier téléchargé
+
 
     // Vérifier si les champs obligatoires sont présents dans la requête
     if (!name || name.trim() === "") {
@@ -29,6 +30,15 @@ exports.createSkill = async (req, res) => {
       return res.status(400).json({ error: 'Invalid rating. Rating must be a number between 0 and 100' });
     } else if (rating = "null") {
       rating = undefined
+    }
+
+
+
+
+    // Si skillCategory est une chaîne, la transformer en tableau
+    if (typeof skillCategory === 'string') {
+      // Séparer la chaîne en tableau en utilisant la virgule comme délimiteur
+      skillCategory = skillCategory.split(',');
     }
 
 
@@ -88,14 +98,48 @@ exports.createSkill = async (req, res) => {
     }
 
 
+
+    if (file != undefined) {
+      // Vérifier le type de fichier (extension)
+      if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+        return res.status(400).json({ message: "Le fichier doit être de type JPG ou PNG." });
+      }
+
+      // Générer une suite de nombres aléatoires
+      const randomNumbers = Math.random().toString(36).substring(2, 8);
+      // Récupérer l'extension du fichier
+      const fileExtension = file.originalname.replace(/\s+/g, '_');
+      // Concaténer la suite de nombres avec le nom d'origine du fichier
+      file.originalname = `${randomNumbers}-${fileExtension}`;
+
+
+
+      // Enregistrez le fichier dans votre système de fichiers (dans le dossier 'uploads')
+      const uploadPath = __dirname + '/../uploads/' + file.originalname; // Chemin du fichier dans votre système de fichiers
+      fs.writeFile(uploadPath, file.buffer, (err) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ error: 'An error occurred while saving the file.' });
+        }
+      })
+
+    }
+
+    let logo
+    if (!file) {
+      logo = undefined;
+    } else {
+      logo = "/uploads/" + req.file.originalname;
+    }
+
     // Créer une nouvelle instance de Skill avec les données
     const newSkill = new Skill({
       name: name.trim(),
       // logo: logo,
       rating: rating,
-      skillCategory: skillCategory !== undefined ? (Array.isArray(skillCategory) ? skillCategory.filter(id => id.trim() !== '') : [skillCategory.trim()]) : null
+      skillCategory: skillCategory !== undefined ? (Array.isArray(skillCategory) ? skillCategory.filter(id => id.trim() !== '') : [skillCategory.trim()]) : null,
+      file: logo
     });
-
 
 
     // Enregistrer la nouvelle skill dans la base de données
@@ -112,11 +156,11 @@ exports.createSkill = async (req, res) => {
 };
 
 
-
 //! PATCH /skill/:id
 //! Modifie une skill par son ID
 exports.updateSkill = async (req, res) => {
   try {
+
 
     // Recherche si l'id est vide
     if (req.params.id == undefined || req.params.id.trim() == "") {
@@ -145,16 +189,7 @@ exports.updateSkill = async (req, res) => {
       return res.status(400).json({ error: 'name ne peux pas être vide' });
     }
 
-    // // Vérifier si le champ 'logo' est fourni et est de type chaîne de caractères non vide
-    // if (req.body.logo !== undefined && typeof req.body.logo === 'string' && req.body.logo.trim() !== '') {
-    //   const processedLogo = req.body.logo.trim().replace(/ /g, '_');
-    //   const logoRegex = /[^.\s][a-zA-Z0-9\s-]*\.(jpg|png)$/i;
-    //   if (logoRegex.test(processedLogo)) {
-    //     updatedFields.logo = processedLogo;
-    //   } else {
-    //     return res.status(400).json({ error: 'Logo must be a URL with .jpg or .png extension and contain a name' });
-    //   }
-    // }
+
 
 
 
@@ -169,6 +204,13 @@ exports.updateSkill = async (req, res) => {
 
     let skillCategory = req.body.skillCategory;
 
+
+
+    // Si skillCategory est une chaîne, la transformer en tableau
+    if (typeof skillCategory === 'string') {
+      // Séparer la chaîne en tableau en utilisant la virgule comme délimiteur
+      skillCategory = skillCategory.split(',');
+    }
 
     if (skillCategory.length === 0) {
       skillCategory = undefined;
@@ -240,6 +282,66 @@ exports.updateSkill = async (req, res) => {
 
 
 
+    ImageToDelete = req.body.ImageToDelete
+    file = req.file
+
+    if (ImageToDelete !== "undefined") {
+      // Supprimer le fichier associé à la compétence
+        // Récupérer le chemin complet du fichier
+        const filePath = path.join('./src', ImageToDelete);
+
+        // Vérifier si le fichier existe
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+          if (!err) {
+            // Le fichier existe, le supprimer
+            fs.unlink(filePath, (err) => {
+              if (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'An error occurred while deleting the file' });
+              }
+            });
+          } else {
+            console.error('Error accessing file:', err);
+          }
+        });
+      
+    }
+
+    if (file != undefined) {
+      // Vérifier le type de fichier (extension)
+      if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+        return res.status(400).json({ message: "Le fichier doit être de type JPG ou PNG." });
+      }
+
+      // Générer une suite de nombres aléatoires
+      const randomNumbers = Math.random().toString(36).substring(2, 8);
+      // Récupérer l'extension du fichier
+      const fileExtension = file.originalname.replace(/\s+/g, '_');
+      // Concaténer la suite de nombres avec le nom d'origine du fichier
+      file.originalname = `${randomNumbers}-${fileExtension}`;
+
+
+
+      // Enregistrez le fichier dans votre système de fichiers (dans le dossier 'uploads')
+      const uploadPath = __dirname + '/../uploads/' + file.originalname; // Chemin du fichier dans votre système de fichiers
+      fs.writeFile(uploadPath, file.buffer, (err) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ error: 'An error occurred while saving the file.' });
+        }
+      })
+
+    }
+
+    let logo
+    if (!file) {
+      logo = undefined;
+    } else {
+      updatedFields.file = "/uploads/" + req.file.originalname;
+    }
+
+
+
 
     // Mettre à jour la skill avec les champs mis à jour
     const updatedSkill = await Skill.findByIdAndUpdate(
@@ -283,10 +385,28 @@ exports.deleteSkill = async (req, res) => {
     }
 
 
+    // Supprimer le fichier associé à la compétence
+    if (skill.file) {
+      // Récupérer le chemin complet du fichier
+      const filePath = path.join('./src', skill.file);
 
+      // Vérifier si le fichier existe
+      fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (!err) {
+          // Le fichier existe, le supprimer
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error(err);
+              return res.status(500).json({ error: 'An error occurred while deleting the file' });
+            }
+          });
+        } else {
+          console.error('Error accessing file:', err);
+        }
+      });
+    }
     // Recherche de toutes les compétences qui ont cette catégorie de compétences
     const certificationsToUpdate = await Certification.find({ skills: req.params.id });
-    console.log(certificationsToUpdate.length)
 
     // Parcourez chaque compétence et supprimez l'ID de la catégorie de compétences à supprimer
     for (const certification of certificationsToUpdate) {
@@ -301,7 +421,6 @@ exports.deleteSkill = async (req, res) => {
 
     // Recherche de toutes les compétences qui ont cette catégorie de compétences
     const educationToUpdate = await Education.find({ skills: req.params.id });
-    console.log(educationToUpdate.length)
 
     // Parcourez chaque compétence et supprimez l'ID de la catégorie de compétences à supprimer
     for (const education of educationToUpdate) {
@@ -315,7 +434,6 @@ exports.deleteSkill = async (req, res) => {
 
     // Recherche de toutes les compétences qui ont cette catégorie de compétences
     const experienceToUpdate = await Experience.find({ skills: req.params.id });
-    console.log(experienceToUpdate.length)
 
     // Parcourez chaque compétence et supprimez l'ID de la catégorie de compétences à supprimer
     for (const experience of experienceToUpdate) {
@@ -329,7 +447,6 @@ exports.deleteSkill = async (req, res) => {
 
     // Recherche de toutes les compétences qui ont cette catégorie de compétences
     const projectToUpdate = await Project.find({ skills: req.params.id });
-    console.log(projectToUpdate.length)
 
     // Parcourez chaque compétence et supprimez l'ID de la catégorie de compétences à supprimer
     for (const project of projectToUpdate) {

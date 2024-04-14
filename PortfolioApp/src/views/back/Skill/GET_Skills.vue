@@ -16,7 +16,7 @@
           <tr>
             <th>ID</th>
             <th>Nom</th>
-            <!-- <th>Logo</th> -->
+            <th>Logo</th>
             <th>Note</th>
             <th>Catégories</th>
             <th>Date de création</th>
@@ -28,7 +28,9 @@
           <tr v-for="skill in skills" :key="skill._id">
             <td>{{ skill._id }}</td>
             <td>{{ skill.name }}</td>
-            <!-- <td><img :src="`${URLapi}${skill.logo}`" alt="" width=25px ></td> -->
+            <td>
+              <img :src="`${URLapi}${skill.file}`" alt="" width=25px >
+            </td>
             <td>{{ skill.rating }}</td>
             <td>
               <template v-if="skill.skillCategoryNames">

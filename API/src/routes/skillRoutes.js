@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const skillController = require('../controllers/skillController');
-const fileUploadMiddleware = require('../middleware/fileUploadMiddleware');
+const multer = require('multer');
 
 
-// /skill
-router
-  .route('/skill')
-  .post(skillController.createSkill);
+// Configuration de multer pour stocker temporairement les fichiers
+const upload = multer({ storage: multer.memoryStorage() });
+
+// POST /skill
+router.post('/skill', upload.single('file'), skillController.createSkill);
 
 // /skills
 router
@@ -19,7 +20,7 @@ router
 router
   .route('/skill/:id')
   .get(skillController.getSkillById)
-  .patch(skillController.updateSkill)
+  .patch( upload.single('file'), skillController.updateSkill)
   .delete(skillController.deleteSkill);
 
 router

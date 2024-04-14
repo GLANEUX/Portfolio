@@ -3,8 +3,19 @@
     <form @submit.prevent="submitForm" enctype="multipart/form-data">
       <label for="name">Nom :</label>
       <input type="text" id="name" v-model="name" required>
-      <!-- <label for="logo">Logo :</label>
-      <input type="file" id="logo" ref="logo"> -->
+      <div v-if="file">
+        <img :src="preview" alt="Image de la compétence"
+          style="max-width: 200px; max-height: 200px;">
+        <button @click="deleteFile">Supprimer</button>
+      </div>
+
+
+      <!-- Champ d'ajout de fichier -->
+      <div v-if="!file">
+        <label for="file">Ajouter un fichier :</label>
+        <input type="file" id="file" ref="file" @change="handleFileChange">
+      </div>
+
       <label>Note :</label>
       <button type="button" @click="toggleRating" :class="{ selected: rating == undefined }">Pas de note</button>
       <input v-model="rating" type="number" id="rating" min="0" max="100" :disabled="rating === undefined">
@@ -41,12 +52,13 @@ export default {
   data() {
     return {
       name: "", // Nom de la compétence
-      // logo: undefined, // URL du logo de la compétence
+      file: undefined, // URL du logo de la compétence
       rating: 0, // Note de la compétence
       selectedCategories: [], // Catégories de compétences sélectionnées
       skillCategories: [], // Liste des catégories de compétences
       error: null, // Message d'erreur
-      success: null // Message de succès
+      success: null, // Message de succès
+      preview: ""
     };
   },
   async created() {
@@ -54,6 +66,20 @@ export default {
     await this.loadSkillCategories();
   },
   methods: {
+    handleFileChange(event) {
+      const selectedFile = event.target.files[0];
+      this.file = event.target.files[0];
+      if (selectedFile) {
+        this.preview = URL.createObjectURL(selectedFile);
+        this.$refs.file.value = "";
+      }
+    },
+    deleteFile() {
+      if (this.$refs.file) {
+        this.$refs.file.value = "";
+      }
+      this.file = undefined;
+    },
     async loadSkillCategories() {
       try {
         // Envoi de la requête GET pour récupérer la liste des catégories de compétences
@@ -81,13 +107,18 @@ export default {
     },
     async submitForm() {
       try {
-        // Envoi de la requête POST pour ajouter une nouvelle compétence
-        const response = await axios.post(`${config.apiUrl}/skill`, {
-          name: this.name,
-          // logo: this.logo,
-          rating: this.rating,
-          skillCategory: this.selectedCategories // Utiliser les catégories sélectionnées
-        });
+     // Créer un objet FormData pour envoyer le fichier avec la requête POST
+     const formData = new FormData();
+      formData.append('file', this.file);
+      formData.append('name', this.name);
+      formData.append('rating', this.rating);
+      formData.append('skillCategory', this.selectedCategories);
+      // Envoi de la requête POST avec les données FormData
+      const response = await axios.post(`${config.apiUrl}/skill`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
 
         // Affichage du succès
         this.success = "Nouvelle compétence ajoutée : " + response.data.name;
