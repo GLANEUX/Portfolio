@@ -163,7 +163,6 @@ exports.deleteSkillCategory = async (req, res) => {
 
     // Recherche de toutes les compétences qui ont cette catégorie de compétences
     const skillsToUpdate = await Skill.find({ skillCategory: req.params.id });
-    console.log(skillsToUpdate.length)
 
      // Parcourez chaque compétence et supprimez l'ID de la catégorie de compétences à supprimer
      for (const skill of skillsToUpdate) {

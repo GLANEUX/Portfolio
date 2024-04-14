@@ -150,7 +150,6 @@ export default {
     },
     async submitForm() {
       try {
-        console.log(this.file, "-----------------------------------------here")
         const formData = new FormData();
         formData.append('file', this.file);
         formData.append('name', this.name);

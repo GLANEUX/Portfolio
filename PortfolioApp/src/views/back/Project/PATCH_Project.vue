@@ -268,7 +268,6 @@ this.images.forEach((image, index) => {
     removeImageDelete(index) {
       this.ImageToDelete.push(this.images[index].url);
       this.images.splice(index, 1);
-console.log(this.ImageToDelete)
     }
   }
 };
