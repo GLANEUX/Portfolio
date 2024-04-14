@@ -1,12 +1,22 @@
 <template>
     <div>
       <h1>Liste des compétences</h1>
+      
+    <div v-if="skills.length === 0">
+      <p>Aucune skills pour le moment.</p>
+      <!-- Lien vers la création d'une nouvelle éducation -->
+      <router-link to="/add-skill">Créer une nouvelle skills</router-link>
+    </div>
+
+    <div v-else>
+
+   
       <table>
         <thead>
           <tr>
             <th>ID</th>
             <th>Nom</th>
-            <th>Logo</th>
+            <!-- <th>Logo</th> -->
             <th>Note</th>
             <th>Catégories</th>
             <th>Date de création</th>
@@ -18,7 +28,7 @@
           <tr v-for="skill in skills" :key="skill._id">
             <td>{{ skill._id }}</td>
             <td>{{ skill.name }}</td>
-            <td><img :src="`${URLapi}${skill.logo}`" alt="" width=25px ></td>
+            <!-- <td><img :src="`${URLapi}${skill.logo}`" alt="" width=25px ></td> -->
             <td>{{ skill.rating }}</td>
             <td>
               <template v-if="skill.skillCategoryNames">
@@ -48,6 +58,7 @@
       <!-- Message de succès après la suppression -->
       <div v-if="deleteSuccessMessage" class="delete-success">
         {{ deleteSuccessMessage }} supprimé avec succès.
+      </div>
       </div>
     </div>
   </template>

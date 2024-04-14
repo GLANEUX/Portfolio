@@ -3,36 +3,28 @@
     <form @submit.prevent="submitForm" enctype="multipart/form-data">
       <label for="name">Nom :</label>
       <input type="text" id="name" v-model="name" required>
-      <label for="logo">Logo :</label>
-      <input type="file" id="logo" ref="logo">
-      <label for="rating">Note :</label>
-      <input type="number" id="rating" v-model="rating" min="0" max="100">
+      <!-- <label for="logo">Logo :</label>
+      <input type="file" id="logo" ref="logo"> -->
+      <label>Note :</label>
+      <button type="button" @click="toggleRating" :class="{ selected: rating == undefined }">Pas de note</button>
+      <input v-model="rating" type="number" id="rating" min="0" max="100" :disabled="rating === undefined">
       <br>
       <label>Catégories de compétences :</label>
       <div>
-        <button
-          v-for="category in skillCategories"
-          :key="category._id"
-          :class="{ selected: isSelected(category._id) }"
-          @click="toggleCategory(category._id)"
-          type="button"
-        >
+        <button v-for="category in skillCategories" :key="category._id" :class="{ selected: isSelected(category._id) }"
+          @click="toggleCategory(category._id)" type="button">
           {{ category.name }}
         </button>
       </div>
       <button type="submit">Ajouter</button>
     </form>
 
-    <!-- Affichage des erreurs -->
     <div v-if="error" class="error">{{ error }}</div>
-
-    <!-- Affichage du succès -->
-    <div v-if="success" class="success">
-      {{ success }}
-      <!-- Boutons pour voir la liste des compétences ou ajouter une nouvelle compétence -->
-      <button @click="redirectToSkillList">Voir la liste des compétences</button>
-      <button @click="addNewSkill">Ajouter une nouvelle compétence</button>
+    <div v-if="success" class="success">{{ success }}</div>
+    <div v-if="success">
+      <button @click="redirectToSkillList">Voir la liste des skill</button>
     </div>
+
   </div>
 </template>
 
@@ -44,8 +36,8 @@ export default {
   data() {
     return {
       name: "", // Nom de la compétence
-      logo: undefined, // URL du logo de la compétence
-      rating: undefined, // Note de la compétence
+      // logo: undefined, // URL du logo de la compétence
+      rating: 0, // Note de la compétence
       selectedCategories: [], // Catégories de compétences sélectionnées
       skillCategories: [], // Liste des catégories de compétences
       error: null, // Message d'erreur
@@ -83,24 +75,18 @@ export default {
       return this.selectedCategories.includes(categoryId);
     },
     async submitForm() {
-        try {
-          console.log(this.selectedCategories)
-          // Envoi de la requête POST pour ajouter une nouvelle compétence
-          const response = await axios.post(`${config.apiUrl}/skill`, {
-            name: this.name,
-            logo: this.logo,
-            rating: this.rating,
-            skillCategory: this.selectedCategories // Utiliser les catégories sélectionnées
-          });
+      try {
+        // Envoi de la requête POST pour ajouter une nouvelle compétence
+        const response = await axios.post(`${config.apiUrl}/skill`, {
+          name: this.name,
+          // logo: this.logo,
+          rating: this.rating,
+          skillCategory: this.selectedCategories // Utiliser les catégories sélectionnées
+        });
 
         // Affichage du succès
-        this.success = "Nouvelle compétence ajoutée : " + responseskill.data.name;
+        this.success = "Nouvelle compétence ajoutée : " + response.data.name;
 
-        // Réinitialisation des champs après l'ajout
-        this.name = "";
-        this.logo = undefined;
-        this.rating = undefined;
-        this.selectedCategories = [];
 
         // Effacer les messages d'erreur précédents
         this.error = null;
@@ -121,20 +107,20 @@ export default {
       // Redirection vers la liste des compétences
       this.$router.push('/get-skills');
     },
-    addNewSkill() {
-      // Réinitialiser le formulaire pour ajouter une nouvelle compétence
-      this.success = null; // Effacer le message de succès
-      this.error = null; // Effacer les erreurs
-      this.name = ""; // Réinitialiser le champ de nom
-      this.logo = undefined; // Réinitialiser le champ de logo
-      this.rating = undefined; // Réinitialiser le champ de note
-      this.selectedCategories = []; // Réinitialiser les catégories sélectionnées
+    toggleRating() {
+      // Activer ou désactiver le champ de note
+      if (this.rating === undefined) {
+        if (this.ratingsave === undefined || this.ratingsave === null || this.ratingsave === "null" || this.ratingsave === "") {
+          this.ratingsave = 0;
+        }
+        this.rating = this.ratingsave;
+      } else {
+
+        this.ratingsave = this.rating
+        this.rating = undefined;
+      }
     }
   },
-  clearRating() {
-    // Efface la valeur du champ rating
-    this.rating = undefined;
-  }
 };
 </script>
 

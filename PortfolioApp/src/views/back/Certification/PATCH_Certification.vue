@@ -13,8 +13,13 @@
       <br>
       <label>Catégories de compétences :</label>
       <div>
-        <button v-for="skill in skills" :key="skill._id" :class="{ selected: isSelected(skill._id) }"
-          @click="toggleSkill(skill._id)" :value="skill._id" type="button">
+        <button v-for="skill in skills" 
+        :key="skill._id" 
+        :class="{ selected: isSelected(skill._id) }"
+          @click="toggleSkill(skill._id)" 
+          :value="skill._id" 
+          type="button"
+          >
           {{ skill.name }}
         </button>
       </div>
@@ -100,9 +105,9 @@ export default {
         if (response.data.skills !== null) {
           this.selectedSkills = response.data.skills;
           this.originalSelectedSkills = response.data.skills.slice(); // Créer une copie distincte
-          this.originalDate = response.data.date;
-          this.date = response.data.date;
         }
+        this.originalDate = response.data.date;
+          this.date = response.data.date;
       } catch (error) {
         console.error("Erreur lors du chargement des détails de la certification :", error);
       }

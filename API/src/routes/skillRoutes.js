@@ -7,7 +7,7 @@ const fileUploadMiddleware = require('../middleware/fileUploadMiddleware');
 // /skill
 router
   .route('/skill')
-  .post(fileUploadMiddleware, skillController.createSkill);
+  .post(skillController.createSkill);
 
 // /skills
 router

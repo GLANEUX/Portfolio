@@ -6,9 +6,9 @@ const skillSchema = new mongoose.Schema({
     name: {
         type: String,
     },
-    logo: {
-        type: String
-    },
+    // logo: {
+    //     type: String
+    // },
     rating: {
         type: Number,
         min: 0,
