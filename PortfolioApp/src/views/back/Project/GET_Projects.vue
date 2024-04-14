@@ -1,6 +1,14 @@
 <template>
   <div>
     <h1>Liste des cproject</h1>
+    
+    <div v-if="projects.length === 0">
+      <p>Aucune projects pour le moment.</p>
+      <!-- Lien vers la création d'une nouvelle projects -->
+      <router-link to="/add-project">Créer une nouvelle projects</router-link>
+    </div>
+
+    <div v-else>
     <table>
       <thead>
         <tr>
@@ -48,6 +56,7 @@
     <!-- Message de succès après la suppression -->
     <div v-if="deleteSuccessMessage" class="delete-success">
       {{ deleteSuccessMessage }} supprimé avec succès.
+    </div>
     </div>
   </div>
 </template>

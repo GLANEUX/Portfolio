@@ -9,26 +9,28 @@
       <input type="text" id="details" v-model="details" required>
       <br>
       <label>Catégories de compétences :</label>
+
       <div>
-        <button v-for="skill in skills" :key="skill._id" :class="{ selected: isSelected(skill._id) }"
-          @click="toggleSkill(skill._id)" type="button">
+        <!-- Boucle sur les skills uniquement s'il y en a -->
+        <button v-if="skills.length > 0" v-for="skill in skills" :key="skill._id"
+          :class="{ selected: isSelected(skill._id) }" @click="toggleSkill(skill._id)" type="button">
           {{ skill.name }}
         </button>
+        <!-- Affiche "Ajouter un skill" s'il n'y a aucun skill -->
+        <span v-else> <router-link to="/add-skill">Ajouter un skill</router-link>
+        </span>
       </div>
       <button type="submit">Ajouter</button>
     </form>
 
-    <!-- Affichage des erreurs -->
+
     <div v-if="error" class="error">{{ error }}</div>
-
-    <!-- Affichage du succès -->
     <div v-if="success" class="success">{{ success }}</div>
-
-    <!-- Boutons après succès -->
     <div v-if="success">
-      <button @click="redirectToProjectList">Voir la liste des skills</button>
-      <button @click="addNewProject">Ajouter une nouvelle skill</button>
+      <button @click="redirectToProjectList">Voir la liste des educationhs</button>
     </div>
+
+
   </div>
 </template>
 
@@ -92,11 +94,6 @@ export default {
         // Affichage du succès
         this.success = "Nouvelle project ajoutée : " + response.data.name;
 
-        // Réinitialisation du champ "name" après l'ajout
-        this.name = "";
-        this.details = "";
-        this.shortDescription = "";
-        this.selectedSkills = [];
         // Effacer les messages d'erreur précédents
         this.error = null;
         //  Redirection automatique vers la liste des compétences après 3 secondes
@@ -115,15 +112,7 @@ export default {
       // Redirection vers la liste des skills de compétences
       this.$router.push('/get-projects');
     },
-    addNewProject() {
-      // Réinitialiser le formulaire pour ajouter une nouvelle skill
-      this.success = null; // Effacer le message de succès
-      this.error = null; // Effacer les erreurs
-      this.name = ""; // Réinitialiser le champ de nom
-      this.shortDescription = "";
-      this.details = ""; // Réinitialiser le champ de nom
-      this.selectedSkills = [];
-    }
+
   }
 };
 </script>

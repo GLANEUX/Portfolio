@@ -14,37 +14,40 @@ const projectSchema = new mongoose.Schema({
     details: {
         type: String
     },
-    links: [
-        {
-            name: {
-                type: String,
-                required: true
-            },
-            url: {
-                type: String,
-                format: 'uri',
-                required: true
-            }
-        }
-    ],
-    images: [
-        {
-            title: {
-                type: String,
-                required: true
-            },
-            alt: {
-                type: String
-            },
-            description: {
-                type: String
-            },
-            url: {
-                type: String,
-                required: true
-            }
-        }
-    ],
+    // links: [
+    //     {
+    //         name: {
+    //             type: String,
+    //             required: true
+    //         },
+    //         url: {
+    //             type: String,
+    //             format: 'uri',
+    //             required: true
+    //         }
+    //     }
+    // ],
+    // images: {
+    //     type: [String]
+    // },
+    // images: [
+    //     {
+    //         title: {
+    //             type: String,
+    //             required: true
+    //         },
+    //         alt: {
+    //             type: String
+    //         },
+    //         description: {
+    //             type: String
+    //         },
+    //         url: {
+    //             type: String,
+    //             required: true
+    //         }
+    //     }
+    // ],
     skills: {
         type: [String]
     },

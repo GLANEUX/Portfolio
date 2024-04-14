@@ -3,32 +3,35 @@
     <h1>Modifier la project</h1>
     <form @submit.prevent="submitForm">
       <label for="name">Nom :</label>
-      <!-- Utilisez v-model pour lier le champ à la propriété name -->
       <input type="text" id="name" v-model="name" required>
       <label for="details">details :</label>
-      <!-- Utilisez v-model pour lier le champ à la propriété name -->
       <input type="text" id="details" v-model="details" required>
       <label for="shortDescription">shortDescription :</label>
-      <!-- Utilisez v-model pour lier le champ à la propriété name -->
       <input type="text" id="shortDescription" v-model="shortDescription" required>
       <br>
       <label>Catégories de compétences :</label>
       <div>
-        <button v-for="skill in skills" :key="skill._id" :class="{ selected: isSelected(skill._id) }"
-          @click="toggleSkill(skill._id)" :value="skill._id" type="button">
+        <!-- Boucle sur les skills uniquement s'il y en a -->
+        <button v-if="skills.length > 0" v-for="skill in skills" :key="skill._id"
+          :class="{ selected: isSelected(skill._id) }" @click="toggleSkill(skill._id)" type="button">
           {{ skill.name }}
         </button>
+        <!-- Affiche "Ajouter un skill" s'il n'y a aucun skill -->
+        <span v-else> <router-link to="/add-skill">Ajouter un skill</router-link>
+        </span>
       </div>
 
       <button type="submit">Enregistrer</button>
       <button type="button" @click="redirectToProjectList">Annuler</button>
       <button type="button" @click="resetForm">Réinitialiser</button>
     </form>
-    <!-- Affichage du message et du bouton de retour à la liste -->
-    <div v-if="showSuccessMessage">
-      <p>{{ successMessage }}</p>
-      <button @click="redirectToProjectList">Retour à la liste</button>
+    <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="success" class="success">{{ success }}</div>
+    <div v-if="success">
+      <button @click="redirectToProjectList">Voir la liste des educationhs</button>
     </div>
+
+
   </div>
 </template>
 
@@ -44,10 +47,13 @@ export default {
       originalDetails: "", // Champ pour stocker le nom d'origine de la catégorie de compétences
       details: "", // Champ pour stocker le nom de la catégorie de compétences
       shortDescription: "",
+      originalSelectedSkills: [], // Skills de compétences sélectionnées d'origine
       selectedSkills: [], // Skills de compétences sélectionnées
       skills: [], // Liste des skills de compétences      
-      showSuccessMessage: false, // Boolean pour contrôler l'affichage du message de succès
-      successMessage: "" // Message de succès à afficher
+      error: null,
+    success: null,
+    projectId: null // Ajout de la propriété educationId pour stocker l'identifiant de l'éducation en cours de modification
+
     };
   },
   async created() {
@@ -56,11 +62,6 @@ export default {
     // Récupération de l'ID de la catégorie depuis l'URL
     this.projectId = this.$route.params.id;
 
-
-    if (this.selectedSkills.length === 0) {
-      // S'il n'y a pas de catégories sélectionnées, définir selectedCategories comme un tableau vide pour éviter les cases à cocher sélectionnées
-      this.selectedSkills = [];
-    }
     // Charger les détails de la catégorie depuis l'API
     this.loadProject();
   },
@@ -102,8 +103,9 @@ export default {
         this.shortDescription = response.data.shortDescription;
         this.originalShortDescription = response.data.shortDescription; // Stocker le nom d'origine     
         if (response.data.skills !== null) {
-          this.selectedSkills = response.data.skills;
-        }
+      this.selectedSkills = response.data.skills;
+      this.originalSelectedSkills = response.data.skills.slice(); // Créer une copie distincte
+    }
       } catch (error) {
         console.error("Erreur lors du chargement des détails de la project :", error);
       }
@@ -117,18 +119,21 @@ export default {
           shortDescription: this.shortDescription,
           skills: this.selectedSkills
         });
-        // Afficher le message de succès et le bouton de retour à la liste
-        this.showSuccessMessage = true;
-        this.successMessage = `"${this.originalName}" modifié`;
+           // Affichage du succès
+           this.success = this.originalName + " modifié" ;
+
+// Effacer les messages d'erreur précédents
+this.error = null;
         // Masquer le message de succès après 3 secondes
         setTimeout(() => {
-          this.showSuccessMessage = false;
+          this.success = null;
           // Redirection vers la page des catégories de compétences après 3 secondes
           this.redirectToProjectList();
         }, 3000);
       } catch (error) {
         // Gestion des erreurs
         console.error("Erreur lors de la modification de la catégorie de compétences :", error);
+        this.success = null;
       }
     },
     resetForm() {
@@ -136,6 +141,8 @@ export default {
       this.name = this.originalName;
       this.details = this.originalDetails;
       this.shortDescription = this.originalShortDescription;
+      this.selectedSkills = this.originalSelectedSkills.slice();
+
     },
     redirectToProjectList() {
       // Redirection vers la page des catégories de compétences
@@ -146,11 +153,16 @@ export default {
 </script>
 
 <style>
-/* Styles CSS facultatifs pour le formulaire */
-input[type="text"] {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  box-sizing: border-box;
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
+button.selected {
+  background-color: #007bff;
+  color: #fff;
 }
 </style>
