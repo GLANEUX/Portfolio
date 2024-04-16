@@ -17,7 +17,7 @@ const swaggerOptions = {
         email: "o.glaneux@gmail.com",
       },
     },
-    servers: [process.env.HEROKU_URL],
+    servers: ["https://glaneux-portfolio-api-3bd575c8516c.herokuapp.com"],
   },
   // Specify the correct path to your YAML file
   apis: ['./src/doc/doc.yaml'],
